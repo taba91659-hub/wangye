@@ -2,13 +2,192 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的第一个网页</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>我的记账本</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6fc;color:#18243b;font-family:-apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif}
+.container{max-width:750px;margin:auto;padding:20px}
+h1{font-size:25px;margin:0 0 8px}
+.subtitle{color:#728096;font-size:14px;margin-bottom:24px}
+.summary{background:linear-gradient(125deg,#2563eb,#7145d9);color:white;border-radius:20px;padding:28px;box-shadow:0 10px 25px #2455c02a}
+.summary p{opacity:.85}
+.total{font-size:38px;font-weight:750;margin:14px 0}
+.panel{background:white;margin-top:20px;padding:22px;border-radius:18px;box-shadow:0 3px 15px #172d4d0b}
+h2{font-size:19px;margin:0 0 20px}
+label{display:block;font-size:14px;font-weight:600;margin:14px 0 8px}
+input,select{width:100%;padding:13px;border:1px solid #dce3ee;border-radius:10px;background:white;font-size:16px;outline:none}
+input:focus,select:focus{border-color:#2563eb}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+button{cursor:pointer;border:0;border-radius:10px;font-size:15px}
+.add{width:100%;margin-top:22px;padding:15px;background:#2563eb;color:white;font-weight:bold}
+.add:hover{background:#1d4ed8}
+.item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid #edf0f5}
+.item:last-child{border:0}
+.item-title{font-weight:600;overflow-wrap:anywhere}
+.meta{font-size:12px;color:#8390a1;margin-top:6px}
+.item-right{display:flex;align-items:center;gap:14px}
+.price{font-weight:bold;white-space:nowrap}
+.del{background:#fff1f2;color:#e11d48;padding:8px 10px}
+.empty{text-align:center;color:#8b96a7;padding:30px 0}
+.footer{text-align:center;color:#96a0af;font-size:12px;padding:30px}
+@media(max-width:480px){
+.container{padding:15px}
+.grid{grid-template-columns:1fr}
+.total{font-size:34px}
+}
+</style>
 </head>
-<body style="text-align:center; padding:50px; font-family:sans-serif;">
-  <h1>你好，欢迎来到我的网站！</h1>
-  <p>这是我用 GitHub 创建的第一个网页。</p>
-  <p>以后这里会变成我的中文记账网站。</p>
+<body>
+<div class="container">
+<h1>💰 我的记账本</h1>
+<div class="subtitle">认真记录每一笔，让生活更有计划</div>
+
+<div class="summary">
+<p>累计总支出</p>
+<div class="total" id="total">¥ 0.00</div>
+<div id="count">已记录 0 笔消费</div>
+</div>
+
+<div class="panel">
+<h2>✏️ 记一笔消费</h2>
+<form id="expenseForm">
+<div class="grid">
+<div>
+<label for="amount">消费金额（元）</label>
+<input id="amount" type="number" min="0.01" step="0.01" placeholder="例如：35.50" required>
+</div>
+<div>
+<label for="category">消费分类</label>
+<select id="category">
+<option>餐饮</option>
+<option>购物</option>
+<option>交通</option>
+<option>娱乐</option>
+<option>其他</option>
+</select>
+</div>
+</div>
+<label for="name">消费项目</label>
+<input id="name" type="text" maxlength="60" placeholder="例如：午餐、超市购物" required>
+<button class="add" type="submit">＋ 添加消费记录</button>
+</form>
+</div>
+
+<div class="panel">
+<h2>📋 消费记录</h2>
+<div id="records"></div>
+</div>
+
+<div class="footer">我的私人记账本 · 数据保存在当前浏览器</div>
+</div>
+
+<script>
+const storageKey = "my-expenses-v1";
+let expenses = [];
+
+try {
+  const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+  if (Array.isArray(saved)) expenses = saved;
+} catch (e) {
+  console.warn("读取记录失败", e);
+}
+
+const money = n => "¥ " + Number(n).toFixed(2);
+
+function save() {
+  localStorage.setItem(storageKey, JSON.stringify(expenses));
+}
+
+function render() {
+  const list = document.getElementById("records");
+  list.replaceChildren();
+
+  const total = expenses.reduce((sum, x) => sum + x.amount, 0);
+  document.getElementById("total").textContent = money(total);
+  document.getElementById("count").textContent =
+    "已记录 " + expenses.length + " 笔消费";
+
+  if (!expenses.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "还没有消费记录，开始记第一笔吧！";
+    list.appendChild(empty);
+    return;
+  }
+
+  expenses.forEach(x => {
+    const row = document.createElement("div");
+    row.className = "item";
+
+    const left = document.createElement("div");
+    const title = document.createElement("div");
+    title.className = "item-title";
+    title.textContent = x.name;
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.textContent = x.category + " · " + x.date;
+    left.append(title, meta);
+
+    const right = document.createElement("div");
+    right.className = "item-right";
+
+    const price = document.createElement("span");
+    price.className = "price";
+    price.textContent = "-" + money(x.amount);
+
+    const del = document.createElement("button");
+    del.className = "del";
+    del.textContent = "删除";
+    del.onclick = () => {
+      if (confirm("确定删除这条记录吗？")) {
+        expenses = expenses.filter(a => a.id !== x.id);
+        save();
+        render();
+      }
+    };
+    right.append(price, del);
+    row.append(left, right);
+    list.appendChild(row);
+  });
+}
+
+document.getElementById("expenseForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const amount = Number(document.getElementById("amount").value);
+  const name = document.getElementById("name").value.trim();
+  const category = document.getElementById("category").value;
+
+  if (!Number.isFinite(amount) || amount <= 0 || !name) {
+    alert("请填写正确的金额和消费项目");
+    return;
+  }
+
+  const id = crypto.randomUUID ? crypto.randomUUID() :
+    Date.now().toString() + Math.random().toString();
+
+  expenses.unshift({
+    id,
+    amount: Math.round(amount * 100) / 100,
+    name,
+    category,
+    date: new Date().toLocaleString("zh-CN")
+  });
+
+  try {
+    save();
+    render();
+    e.target.reset();
+    document.getElementById("amount").focus();
+  } catch (err) {
+    expenses.shift();
+    alert("保存失败，请检查浏览器存储空间或隐私设置");
+  }
+});
+
+render();
+</script>
 </body>
 </html>
