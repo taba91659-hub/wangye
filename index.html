@@ -1,491 +1,60 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>我的云端记账本</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的智能记账本 2.0</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#f3f6fc;color:#1e293b;font-family:-apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif}
-main{max-width:760px;margin:auto;padding:18px}
-h1{font-size:25px;margin:8px 0}
-h2{font-size:19px;margin:0 0 18px}
-p{line-height:1.65}
-.muted{font-size:13px;color:#64748b}
-.card{background:white;border-radius:18px;padding:22px;margin-top:18px;box-shadow:0 3px 15px #182b4d0a}
-.hero{background:linear-gradient(125deg,#2563eb,#7446dc);color:white;border-radius:20px;padding:27px;margin-top:20px}
-.total{font-size:38px;font-weight:750;margin:12px 0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-label{display:block;font-weight:600;font-size:14px;margin:13px 0 7px}
-input,select{width:100%;padding:12px;border:1px solid #d9e2ef;border-radius:10px;background:white;font-size:16px}
-button{border:0;border-radius:10px;padding:12px;cursor:pointer;font-size:14px}
-.primary{background:#2563eb;color:white;font-weight:650}
-.secondary{background:#eff6ff;color:#1d4ed8}
-.danger{background:#fff1f2;color:#e11d48}
-.full{width:100%;margin-top:15px}
-.buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
-.buttons button{flex:1}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:15px 0;border-bottom:1px solid #edf2f7}
-.row:last-child{border:0}
-.small{font-size:12px;color:#8491a5;margin-top:5px}
-.bar{height:9px;background:#edf2f7;border-radius:20px;overflow:hidden;margin:8px 0 15px}
-.fill{height:100%;background:linear-gradient(90deg,#2563eb,#8b5cf6)}
-.empty{text-align:center;color:#94a3b8;padding:22px}
-.hidden{display:none}
-#message{margin-top:12px;white-space:pre-wrap;font-size:14px}
-.ok{color:#15803d}
-.error{color:#dc2626}
-footer{text-align:center;font-size:12px;color:#94a3b8;padding:26px}
-@media(max-width:480px){
-.grid{grid-template-columns:1fr}
-.buttons{flex-direction:column}
-.total{font-size:32px}
-}
+:root{font-family:-apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif;color:#1d2940;background:#f4f7fc}*{box-sizing:border-box}body{margin:0}main{max-width:880px;margin:auto;padding:18px}h1{font-size:27px;margin:10px 0 3px}h2{font-size:18px;margin:0 0 16px}p{line-height:1.5}.muted{color:#65738b;font-size:13px}.card{background:white;border-radius:18px;padding:22px;margin:17px 0;box-shadow:0 5px 20px #1c355009}.hero{color:white;border-radius:20px;background:linear-gradient(120deg,#2359ec,#7543ce);padding:28px;margin:17px 0}.huge{font-size:38px;font-weight:750;margin:8px 0 15px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}label{font-size:13px;font-weight:650;display:block;margin:10px 0 6px}input,select{border:1px solid #d7e0ee;border-radius:10px;padding:11px;font:inherit;width:100%;background:white;min-width:0}button{font:inherit;font-size:14px;border:0;border-radius:10px;padding:11px 15px;cursor:pointer}.primary{background:#2563eb;color:white;font-weight:700}.secondary{background:#eaf2ff;color:#2050b5}.danger{background:#fff0f1;color:#bf2943}.wide{width:100%;margin-top:16px}.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #edf0f5;padding:12px 0;gap:12px}.row:last-child{border:0}.row strong{overflow-wrap:anywhere}.small{font-size:12px;color:#718096;margin-top:4px}.money{font-weight:700;white-space:nowrap}.track{background:#edf1f9;height:11px;border-radius:99px;overflow:hidden}.fill{height:100%;border-radius:99px;background:#466deb}.chart-row{display:grid;grid-template-columns:72px 1fr 90px;gap:10px;align-items:center;margin:12px 0;font-size:13px}.donut{width:170px;height:170px;border-radius:50%;position:relative;margin:auto;background:#eef0f5}.donut:after{content:"消费分类";position:absolute;inset:32px;display:grid;place-items:center;border-radius:50%;background:white;font-size:14px;font-weight:650}.stat-value{font-size:26px;font-weight:750;margin:8px 0}.notice{padding:12px 14px;background:#edf4ff;border-radius:10px;color:#27476e;font-size:13px;overflow-wrap:anywhere}#status.error{background:#fff0ef;color:#a92336}#status{margin:15px 0}.pill{display:inline-block;font-size:12px;padding:5px 9px;border-radius:99px;background:#e9f1ff;color:#315ac5}.empty{text-align:center;color:#8c98aa;padding:24px}.editing{border:2px solid #6b6deb}footer{text-align:center;color:#8c98aa;font-size:12px;padding:20px}[hidden]{display:none!important}@media(max-width:560px){main{padding:12px}.grid,.two{grid-template-columns:1fr}.huge{font-size:33px}.chart-row{grid-template-columns:58px 1fr 72px}.card{padding:17px}.row{align-items:flex-start}.row .actions{justify-content:flex-end}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
-<body>
-<main>
-<h1>☁️ 我的云端记账本</h1>
-<p class="muted">安全登录 · 云端保存 · 手机电脑同步</p>
-
-<section class="card" id="loginBox">
-<h2>🔐 登录记账账号</h2>
-<label>电子邮箱</label>
-<input id="email" type="email" autocomplete="email" placeholder="请输入邮箱">
-<label>密码</label>
-<input id="password" type="password" autocomplete="current-password" placeholder="请输入密码">
-<div class="buttons">
-<button class="primary" id="loginBtn">登录</button>
-<button class="secondary" id="signupBtn">注册新账号</button>
+<body><main>
+<h1>💰 我的智能记账本 2.0</h1><p class="muted">云端同步 · 消费图表 · 预算管理 · 账单搜索</p>
+<section id="loginBox" class="card"><h2>🔐 登录记账账号</h2><label for="email">邮箱</label><input id="email" type="email" autocomplete="email"><label for="password">密码</label><input id="password" type="password" autocomplete="current-password"><div class="actions" style="margin-top:16px"><button id="loginBtn" class="primary">登录</button><button id="signupBtn" class="secondary">注册新账号</button></div><p class="muted">注册后请根据邮件提示验证邮箱，验证完成后返回登录。</p></section>
+<div id="app" hidden>
+<section class="card"><div class="row"><div><strong>👤 已登录</strong><div class="small" id="userEmail"></div></div><button class="secondary" id="logoutBtn">退出登录</button></div><button id="refreshBtn" class="secondary wide">↻ 刷新云端账单</button></section>
+<section class="hero"><div>累计总支出</div><div class="huge" id="total">¥0.00</div><div id="count">0 笔消费</div></section>
+<section class="card"><h2>✏️ <span id="formTitle">记一笔消费</span></h2><form id="expenseForm"><div class="grid"><div><label for="amount">金额（元）</label><input id="amount" type="number" required min="0.01" max="999999999" step="0.01"></div><div><label for="category">消费分类</label><select id="category"><option>餐饮</option><option>购物</option><option>交通</option><option>娱乐</option><option>其他</option></select></div></div><div class="grid"><div><label for="name">消费项目</label><input id="name" required maxlength="60" placeholder="例如：午餐"></div><div><label for="expenseDate">消费日期与时间</label><input type="datetime-local" id="expenseDate" required></div></div><div class="actions"><button class="primary" type="submit" id="submitExpense">＋ 保存到云端</button><button class="secondary" type="button" id="cancelEdit" hidden>取消编辑</button></div></form></section>
+<section class="card"><h2>📅 月度统计与预算</h2><label for="month">选择月份</label><input id="month" type="month"><div class="grid"><div><p class="muted">本月支出</p><div class="stat-value" id="monthTotal">¥0.00</div></div><div><p class="muted">消费笔数</p><div class="stat-value" id="monthCount">0</div></div></div><label for="budget">本月预算金额（元）</label><div class="actions"><input id="budget" type="number" min="0.01" max="9999999999" step="0.01" placeholder="例如 3000" style="flex:1;min-width:170px"><button id="saveBudget" class="primary">保存云端预算</button><button id="deleteBudget" class="secondary">清除预算</button></div><p id="budgetHint" class="muted"></p><div class="track"><div id="budgetFill" class="fill" style="width:0%"></div></div></section>
+<section class="card"><h2>📊 消费统计图表</h2><div class="two"><div><h3 style="font-size:15px">分类占比</h3><div id="donut" class="donut"></div><div id="legend"></div></div><div><h3 style="font-size:15px">近6个月消费趋势</h3><div id="trend"></div></div></div></section>
+<section class="card"><h2>🔎 搜索与筛选账单</h2><div class="grid"><div><label for="search">搜索消费项目</label><input id="search" type="search" placeholder="例如：超市、午餐"></div><div><label for="filterCategory">筛选分类</label><select id="filterCategory"><option value="">全部分类</option><option>餐饮</option><option>购物</option><option>交通</option><option>娱乐</option><option>其他</option></select></div></div><p class="muted">下面显示所选月份内符合搜索条件的账单。</p><div id="records"></div></section>
+<section class="card"><h2>💾 账单备份与恢复</h2><div class="actions"><button id="jsonBtn" class="secondary">下载 JSON 备份</button><button id="csvBtn" class="secondary">导出 Excel CSV</button></div><label for="importFile">导入旧版 JSON 备份</label><input id="importFile" type="file" accept=".json,application/json"><p class="muted">导入只新增未检测到的账单，不覆盖现有记录。操作前务必先下载当前云端备份。</p></section>
 </div>
-<p class="muted">首次注册后，请按邮件提示验证邮箱，再登录。</p>
-</section>
-
-<div id="app" class="hidden">
-<section class="card">
-<div class="row">
-<div>
-<strong>👤 已登录</strong>
-<div class="small" id="userEmail"></div>
-</div>
-<button class="secondary" id="logoutBtn">退出登录</button>
-</div>
-<p class="muted">☁️ 消费记录保存在 Supabase 云端。</p>
-<button class="secondary full" id="refreshBtn">🔄 刷新云端账单</button>
-</section>
-
-<section class="hero">
-<div>累计总支出</div>
-<div class="total" id="total">¥0.00</div>
-<div id="count">0 笔消费</div>
-</section>
-
-<section class="card">
-<h2>✏️ 添加消费记录</h2>
-<form id="expenseForm">
-<div class="grid">
-<div>
-<label>金额（元）</label>
-<input id="amount" type="number" min="0.01" max="999999999" step="0.01" required>
-</div>
-<div>
-<label>分类</label>
-<select id="category">
-<option>餐饮</option>
-<option>购物</option>
-<option>交通</option>
-<option>娱乐</option>
-<option>其他</option>
-</select>
-</div>
-</div>
-<label>消费项目</label>
-<input id="name" required maxlength="60" placeholder="例如：午餐">
-<button class="primary full" type="submit">＋ 保存到云端</button>
-</form>
-</section>
-
-<section class="card">
-<h2>📅 每月消费统计</h2>
-<label>选择月份</label>
-<input id="month" type="month">
-<div class="grid" style="margin-top:18px">
-<div><span class="muted">本月支出</span><h2 id="monthTotal">¥0.00</h2></div>
-<div><span class="muted">消费笔数</span><h2 id="monthCount">0 笔</h2></div>
-</div>
-<div id="stats"></div>
-</section>
-
-<section class="card">
-<h2>📋 当月消费明细</h2>
-<div id="records"></div>
-</section>
-
-<section class="card">
-<h2>💾 备份与旧账单迁移</h2>
-<div class="buttons">
-<button class="secondary" id="jsonBtn">下载 JSON 备份</button>
-<button class="secondary" id="csvBtn">导出 Excel CSV</button>
-</div>
-<label>导入旧记账网站的 JSON 文件</label>
-<input id="importFile" type="file" accept=".json,application/json">
-<p class="muted">导入会向云端添加备份中尚不存在的记录，不会删除云端已有记录。请先下载最新备份，避免误操作。</p>
-</section>
-</div>
-
-<p id="message" role="status" aria-live="polite"></p>
-<footer>我的云端记账本 · 请定期备份重要账单</footer>
+<div id="status" class="notice" role="status" aria-live="polite">准备连接云端…</div>
+<footer>智能记账本 2.0 · Supabase 云端同步 · 请定期保存账单备份</footer>
 </main>
-
 <script>
-const SUPABASE_URL =
-  "https://joyqlelzapraawudhuxn.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_7_nDQatwVBChB4yotQ8YwA_ugViwwAL";
-
-const $ = id => document.getElementById(id);
-const money = n => "¥" + Number(n).toFixed(2);
-const categories = ["餐饮","购物","交通","娱乐","其他"];
-let db, user = null, expenses = [];
-
-function msg(text, error=false){
-  $("message").textContent=text;
-  $("message").className=error?"error":"ok";
-}
-
-function localMonth(date){
-  const d=new Date(date);
-  if(Number.isNaN(d.getTime()))return "";
-  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
-}
-
-function parseOldDate(value){
-  if(typeof value!=="string")return null;
-  const match=value.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})(?:[ ,T]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
-  if(!match)return null;
-  const d=new Date(
-    Number(match[1]),Number(match[2])-1,Number(match[3]),
-    Number(match[4]||0),Number(match[5]||0),Number(match[6]||0)
-  );
-  if(Number.isNaN(d.getTime())||
-     d.getFullYear()!==Number(match[1])||
-     d.getMonth()!==Number(match[2])-1||
-     d.getDate()!==Number(match[3]))return null;
-  return d.toISOString();
-}
-
-function showLogin(){
-  user=null;
-  expenses=[];
-  $("loginBox").classList.remove("hidden");
-  $("app").classList.add("hidden");
-}
-
-function showApp(){
-  $("loginBox").classList.add("hidden");
-  $("app").classList.remove("hidden");
-  $("userEmail").textContent=user.email||"";
-}
-
-function fail(error){
-  console.error(error);
-  msg(error?.message||"操作失败，请检查网络连接",true);
-}
-
-async function load(){
-  if(!user)return;
-  const {data,error}=await db.from("expenses")
-    .select("id,amount,name,category,date")
-    .eq("user_id",user.id)
-    .order("date",{ascending:false})
-    .limit(10000);
-  if(error){fail(error);return;}
-  expenses=data||[];
-  render();
-  msg("云端账单已更新");
-}
-
-function render(){
-  $("total").textContent=money(
-    expenses.reduce((s,x)=>s+Number(x.amount),0)
-  );
-  $("count").textContent=expenses.length+" 笔消费";
-
-  const selected=$("month").value;
-  const monthly=expenses.filter(x=>localMonth(x.date)===selected);
-  const total=monthly.reduce((s,x)=>s+Number(x.amount),0);
-
-  $("monthTotal").textContent=money(total);
-  $("monthCount").textContent=monthly.length+" 笔";
-
-  const stats=$("stats");
-  stats.replaceChildren();
-
-  categories.forEach(cat=>{
-    const n=monthly.filter(x=>x.category===cat)
-      .reduce((s,x)=>s+Number(x.amount),0);
-    const block=document.createElement("div");
-    const label=document.createElement("div");
-    label.textContent=cat+"："+money(n);
-    const bar=document.createElement("div");
-    bar.className="bar";
-    const fill=document.createElement("div");
-    fill.className="fill";
-    fill.style.width=(total?n/total*100:0)+"%";
-    bar.append(fill);
-    block.append(label,bar);
-    stats.append(block);
-  });
-
-  const list=$("records");
-  list.replaceChildren();
-
-  if(!monthly.length){
-    const p=document.createElement("div");
-    p.className="empty";
-    p.textContent="这个月暂时没有消费记录";
-    list.append(p);
-  }
-
-  monthly.forEach(x=>{
-    const row=document.createElement("div");
-    row.className="row";
-    const left=document.createElement("div");
-    const title=document.createElement("strong");
-    title.textContent=x.name;
-    const meta=document.createElement("div");
-    meta.className="small";
-    meta.textContent=x.category+" · "+
-      new Date(x.date).toLocaleString("zh-CN");
-    left.append(title,meta);
-
-    const right=document.createElement("div");
-    right.style.cssText="display:flex;gap:10px;align-items:center";
-    const price=document.createElement("strong");
-    price.textContent="-"+money(x.amount);
-    const del=document.createElement("button");
-    del.className="danger";
-    del.textContent="删除";
-    del.onclick=async()=>{
-      if(!confirm("确定删除这笔账单吗？"))return;
-      const {error}=await db.from("expenses")
-        .delete().eq("id",x.id).eq("user_id",user.id);
-      if(error){fail(error);return;}
-      await load();
-    };
-    right.append(price,del);
-    row.append(left,right);
-    list.append(row);
-  });
-}
-
-async function login(){
-  const email=$("email").value.trim();
-  const password=$("password").value;
-  if(!email||!password){msg("请输入邮箱和密码",true);return;}
-  const {data,error}=await db.auth.signInWithPassword({email,password});
-  if(error){fail(error);return;}
-  user=data.user;
-  showApp();
-  await load();
-}
-
-async function signup(){
-  const email=$("email").value.trim();
-  const password=$("password").value;
-  if(!email||password.length<12){
-    msg("请填写邮箱，并设置至少12位密码",true);
-    return;
-  }
-  const {data,error}=await db.auth.signUp({
-    email,password,
-    options:{emailRedirectTo:location.origin+location.pathname}
-  });
-  if(error){fail(error);return;}
-  if(data.session){
-    user=data.user;
-    showApp();
-    await load();
-  }else{
-    msg("注册请求已提交。请查看邮箱验证邮件，验证后再登录。");
-  }
-}
-
-$("loginBtn").onclick=login;
-$("signupBtn").onclick=signup;
-
-$("logoutBtn").onclick=async()=>{
-  const {error}=await db.auth.signOut();
-  if(error){fail(error);return;}
-  showLogin();
-  msg("已退出登录");
-};
-
-$("refreshBtn").onclick=load;
-$("month").addEventListener("change",render);
-
-$("expenseForm").addEventListener("submit",async e=>{
-  e.preventDefault();
-  if(!user)return;
-  const amount=Number($("amount").value);
-  const name=$("name").value.trim();
-  const category=$("category").value;
-
-  if(!Number.isFinite(amount)||amount<=0||amount>999999999||
-     !name||!categories.includes(category)){
-    msg("请检查金额和消费项目",true);return;
-  }
-
-  const {error}=await db.from("expenses").insert({
-    user_id:user.id,
-    amount:Math.round(amount*100)/100,
-    name,category,
-    date:new Date().toISOString()
-  });
-  if(error){fail(error);return;}
-  e.target.reset();
-  $("month").value=localMonth(new Date());
-  await load();
-});
-
-function download(filename,content,type){
-  const blob=new Blob([content],{type});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;
-  a.download=filename;
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),3000);
-}
-
-$("jsonBtn").onclick=()=>{
-  download("云端记账备份.json",JSON.stringify(expenses,null,2),
-    "application/json;charset=utf-8");
-};
-
-function csvCell(value){
-  let text=String(value??"");
-  if(/^\s*[=+\-@\t\r]/.test(text))text="'"+text;
-  return '"'+text.replace(/"/g,'""')+'"';
-}
-
-$("csvBtn").onclick=()=>{
-  const rows=[["日期","项目","分类","金额"]];
-  expenses.forEach(x=>rows.push([
-    new Date(x.date).toLocaleString("zh-CN"),
-    x.name,x.category,x.amount
-  ]));
-  const csv="\uFEFF"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n");
-  download("云端消费账单.csv",csv,"text/csv;charset=utf-8");
-};
-
-$("importFile").addEventListener("change",async e=>{
-  const file=e.target.files[0];
-  if(!file||!user)return;
-  try{
-    if(file.size>5*1024*1024)throw Error("文件不能超过5MB");
-    const data=JSON.parse(await file.text());
-    if(!Array.isArray(data)||data.length>10000)
-      throw Error("备份文件格式不正确");
-
-    const normalized=data.map(x=>{
-      if(!x||typeof x!=="object")throw Error("记录无效");
-      const date=parseOldDate(x.date);
-      const amount=Number(x.amount);
-      if(!date||!Number.isFinite(amount)||amount<=0||
-         amount>999999999||typeof x.name!=="string"||
-         !x.name.trim()||x.name.length>60||
-         !categories.includes(x.category))
-        throw Error("备份中有无法识别的记录");
-      return {
-        name:x.name.trim(),
-        category:x.category,
-        amount:Math.round(amount*100)/100,
-        date
-      };
-    });
-
-    await load();
-
-    const signature=x=>[
-      x.name,x.category,Number(x.amount).toFixed(2),
-      new Date(x.date).toISOString()
-    ].join("|");
-
-    const existing=new Set(expenses.map(signature));
-    const toAdd=[];
-
-    for(const x of normalized){
-      const key=signature(x);
-      if(!existing.has(key)){
-        toAdd.push({...x,user_id:user.id});
-        existing.add(key);
-      }
-    }
-
-    if(!toAdd.length){
-      msg("备份中的记录已经存在，无需重复导入");
-      return;
-    }
-
-    if(!confirm("准备导入 "+toAdd.length+
-      " 笔记录到云端。请确认你已保存备份，是否继续？"))return;
-
-    for(let i=0;i<toAdd.length;i+=100){
-      const {error}=await db.from("expenses")
-        .insert(toAdd.slice(i,i+100));
-      if(error)throw error;
-    }
-
-    await load();
-    msg("导入成功，共新增 "+toAdd.length+" 笔记录");
-  }catch(error){
-    fail(error);
-  }finally{
-    e.target.value="";
-  }
-});
-
-async function start(){
-  if(!SUPABASE_KEY.startsWith("sb_publishable_")){
-    msg("请先在代码中填写完整的 Supabase Publishable Key",true);
-    return;
-  }
-  if(!window.supabase){
-    msg("连接组件加载失败，请检查网络",true);
-    return;
-  }
-
-  db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
-  const now=new Date();
-  $("month").value=localMonth(now);
-
-  const {data,error}=await db.auth.getUser();
-  if(!error&&data.user){
-    user=data.user;
-    showApp();
-    await load();
-  }else{
-    showLogin();
-  }
-
-  db.auth.onAuthStateChange((event,session)=>{
-    if(event==="SIGNED_OUT"){
-      showLogin();
-    }
-    if(event==="TOKEN_REFRESHED"&&!session){
-      showLogin();
-    }
-  });
-}
-
-start().catch(fail);
-</script>
-</body>
-</html>
+"use strict";
+// 以下是浏览器可用的 Supabase 公开连接信息，绝不可替换为 Secret Key。
+const SUPABASE_URL="https://joyqlelzapraawudhuxn.supabase.co";
+const SUPABASE_KEY="sb_publishable_7_nDQatwVBChB4yotQ8YwA_ugViwwAL";
+const $=id=>document.getElementById(id),cats=["餐饮","购物","交通","娱乐","其他"];
+const palette=["#2563eb","#7c3aed","#10b981","#f59e0b","#ec4899"];
+let db,user=null,expenses=[],budgets=[],editingId=null,requestVersion=0;
+const money=n=>"¥"+Number(n).toFixed(2),sum=a=>a.reduce((s,x)=>s+Number(x.amount),0);
+function notice(message,err=false){$("status").textContent=message;$("status").className=err?"notice error":"notice"}
+function ym(d){const x=new Date(d);if(!Number.isFinite(x.getTime()))return "";return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")}
+function localTime(d){const x=new Date(d),pad=n=>String(n).padStart(2,"0");return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}T${pad(x.getHours())}:${pad(x.getMinutes())}`}
+function errMessage(e){return e?.message||"操作失败，请检查网络后重试"}
+function sessionUI(current){user=current||null;$("loginBox").hidden=!!user;$("app").hidden=!user;if(user)$("userEmail").textContent=user.email||"";else{expenses=[];budgets=[];editingId=null;notice("请登录后使用云端记账。")}}
+async function load(){if(!user)return;const version=++requestVersion,uid=user.id;notice("正在读取云端数据…");const [er,br]=await Promise.all([db.from("expenses").select("id,user_id,amount,name,category,date").eq("user_id",uid).order("date",{ascending:false}).limit(10000),db.from("monthly_budgets").select("user_id,month,amount").eq("user_id",uid)]);if(version!==requestVersion||!user||user.id!==uid)return;if(er.error){notice("账单读取失败："+errMessage(er.error),true);return}expenses=er.data||[];if(br.error){notice("账单正常，但预算加载失败："+errMessage(br.error),true);budgets=[]}else{budgets=br.data||[];notice("云端账单与预算已更新。")}render()}
+function render(){if(!user)return;$("total").textContent=money(sum(expenses));$("count").textContent=expenses.length+" 笔消费";const month=$("month").value,monthly=expenses.filter(x=>ym(x.date)===month),total=sum(monthly);$("monthTotal").textContent=money(total);$("monthCount").textContent=monthly.length+" 笔";const budget=budgets.find(x=>x.month===month);$("budget").value=budget?budget.amount:"";const limit=Number(budget?.amount||0);$("budgetHint").textContent=limit?(total>limit?`已超出预算 ${money(total-limit)}`:`剩余预算 ${money(limit-total)}`):"本月尚未设置云端预算";$("budgetFill").style.width=(limit?Math.min(100,total/limit*100):0)+"%";$("budgetFill").style.background=limit&&total>limit?"#e11d48":"#466deb";renderCharts(monthly,month);renderRecords(monthly)}
+function renderCharts(monthly,month){const vals=cats.map(cat=>sum(monthly.filter(x=>x.category===cat))),total=vals.reduce((a,b)=>a+b,0);let start=0;const slices=vals.map((v,i)=>{const end=start+(total?v/total*100:0),s=`${palette[i]} ${start}% ${end}%`;start=end;return s});$("donut").style.background=total?`conic-gradient(${slices.join(",")})`:"#eef0f5";$("legend").replaceChildren();cats.forEach((cat,i)=>{const line=document.createElement("div");line.className="row";const a=document.createElement("span"),b=document.createElement("span");a.textContent="● "+cat;a.style.color=palette[i];b.textContent=money(vals[i]);line.append(a,b);$("legend").append(line)});const [yr,mo]=month.split("-").map(Number),points=[];for(let k=5;k>=0;k--){const d=new Date(yr,mo-1-k,1),m=ym(d);points.push({label:m.slice(2),value:sum(expenses.filter(x=>ym(x.date)===m))})}const max=Math.max(...points.map(p=>p.value),1);$("trend").replaceChildren();points.forEach(p=>{const line=document.createElement("div");line.className="chart-row";const a=document.createElement("span"),b=document.createElement("div"),fill=document.createElement("div"),c=document.createElement("span");a.textContent=p.label;b.className="track";fill.className="fill";fill.style.width=100*p.value/max+"%";b.append(fill);c.textContent=money(p.value);line.append(a,b,c);$("trend").append(line)})}
+function renderRecords(monthly){const q=$("search").value.trim().toLowerCase(),cat=$("filterCategory").value,rows=monthly.filter(x=>x.name.toLowerCase().includes(q)&&(!cat||cat===x.category));$("records").replaceChildren();if(!rows.length){const p=document.createElement("p");p.className="empty";p.textContent="没有符合条件的记录";$("records").append(p);return}rows.forEach(x=>{const row=document.createElement("div");row.className="row";const left=document.createElement("div");left.style.minWidth="0";const title=document.createElement("strong");title.textContent=x.name;const sub=document.createElement("div");sub.className="small";sub.textContent=x.category+" · "+new Date(x.date).toLocaleString("zh-CN");left.append(title,sub);const right=document.createElement("div");right.className="actions";const amount=document.createElement("span");amount.className="money";amount.textContent="−"+money(x.amount);const edit=document.createElement("button");edit.textContent="编辑";edit.className="secondary";edit.onclick=()=>beginEdit(x);const del=document.createElement("button");del.textContent="删除";del.className="danger";del.onclick=()=>remove(x.id);right.append(amount,edit,del);row.append(left,right);$("records").append(row)})}
+function beginEdit(x){editingId=x.id;$("name").value=x.name;$("amount").value=x.amount;$("category").value=x.category;$("expenseDate").value=localTime(x.date);$("formTitle").textContent="编辑消费记录";$("submitExpense").textContent="保存修改";$("cancelEdit").hidden=false;$("expenseForm").closest("section").classList.add("editing");$("expenseForm").scrollIntoView({behavior:"smooth",block:"center"})}
+function cancelEdit(){editingId=null;$("expenseForm").reset();$("expenseDate").value=localTime(new Date());$("formTitle").textContent="记一笔消费";$("submitExpense").textContent="＋ 保存到云端";$("cancelEdit").hidden=true;$("expenseForm").closest("section").classList.remove("editing")}
+async function remove(id){if(!user||!confirm("确定删除这笔账单吗？"))return;const {error}=await db.from("expenses").delete().eq("id",id).eq("user_id",user.id);if(error){notice(errMessage(error),true);return}if(editingId===id)cancelEdit();await load()}
+$("cancelEdit").onclick=cancelEdit;
+$("expenseForm").onsubmit=async e=>{e.preventDefault();if(!user)return;const amount=Number($("amount").value),name=$("name").value.trim(),category=$("category").value,d=new Date($("expenseDate").value);if(!Number.isFinite(amount)||amount<=0||amount>999999999||!name||!cats.includes(category)||!Number.isFinite(d.getTime())){notice("请填写正确的金额、项目和时间",true);return}const values={amount:Math.round(amount*100)/100,name,category,date:d.toISOString()};notice("正在保存…");const {error}=editingId?await db.from("expenses").update(values).eq("id",editingId).eq("user_id",user.id):await db.from("expenses").insert({...values,user_id:user.id});if(error){notice("保存失败："+errMessage(error),true);return}cancelEdit();$("month").value=ym(d);await load()};
+$("saveBudget").onclick=async()=>{if(!user)return;const amount=Number($("budget").value),month=$("month").value;if(!Number.isFinite(amount)||amount<=0||amount>9999999999){notice("请输入大于0的预算金额",true);return}const {error}=await db.from("monthly_budgets").upsert({user_id:user.id,month,amount:Math.round(amount*100)/100},{onConflict:"user_id,month"});if(error){notice("预算保存失败："+errMessage(error),true);return}await load()};
+$("deleteBudget").onclick=async()=>{if(!user||!confirm("清除当前月份的预算？不会删除消费记录。"))return;const {error}=await db.from("monthly_budgets").delete().eq("user_id",user.id).eq("month",$("month").value);if(error){notice(errMessage(error),true);return}await load()};
+$("month").onchange=render;$("search").oninput=render;$("filterCategory").onchange=render;$("refreshBtn").onclick=load;
+async function auth(type){if(!db)return;const email=$("email").value.trim(),password=$("password").value;if(!email||!password){notice("请输入邮箱和密码",true);return}let res;if(type==="signup")res=await db.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});else res=await db.auth.signInWithPassword({email,password});if(res.error){notice(errMessage(res.error),true);return}if(type==="signup"&&!res.data.session){notice("注册已提交，请查看邮箱验证邮件，然后回来登录。");return}if(res.data.user){sessionUI(res.data.user);await load()}}
+$("loginBtn").onclick=()=>auth("login");$("signupBtn").onclick=()=>auth("signup");$("logoutBtn").onclick=async()=>{const {error}=await db.auth.signOut();if(error){notice(errMessage(error),true);return}++requestVersion;sessionUI(null)};
+function download(name,contents,type){const url=URL.createObjectURL(new Blob([contents],{type})),a=document.createElement("a");a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000)}
+function csvCell(v){let s=String(v??"");if(/^\s*[=+\-@\t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'}
+$("jsonBtn").onclick=()=>download("云端消费账单备份.json",JSON.stringify(expenses,null,2),"application/json;charset=utf-8");$("csvBtn").onclick=()=>{const rows=[["日期","项目","分类","金额"],...expenses.map(x=>[new Date(x.date).toLocaleString("zh-CN"),x.name,x.category,x.amount])];download("云端账单.csv","\uFEFF"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n"),"text/csv;charset=utf-8")};
+function oldDate(value){if(typeof value!=="string")return null;if(/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:?\d{2})$/i.test(value)){const d=new Date(value);return Number.isFinite(d.getTime())?d.toISOString():null}const m=value.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})(?:[ ,T]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);if(!m)return null;const d=new Date(+m[1],+m[2]-1,+m[3],+(m[4]||0),+(m[5]||0),+(m[6]||0));return Number.isFinite(d.getTime())&&d.getFullYear()===+m[1]&&d.getMonth()===+m[2]-1&&d.getDate()===+m[3]?d.toISOString():null}
+$("importFile").onchange=async e=>{const file=e.target.files?.[0];if(!file||!user)return;try{if(file.size>5*1024*1024)throw Error("备份文件超过5MB");const source=JSON.parse(await file.text());if(!Array.isArray(source)||source.length>10000)throw Error("不是受支持的 JSON 账单");const records=source.map(x=>{const amount=Number(x?.amount),date=oldDate(x?.date);if(!date||!Number.isFinite(amount)||amount<=0||amount>999999999||typeof x?.name!=="string"||!x.name.trim()||x.name.length>60||!cats.includes(x.category))throw Error("存在不符合要求的账单");return{name:x.name.trim(),category:x.category,amount:Math.round(amount*100)/100,date}});const {data,error}=await db.from("expenses").select("id,name,category,amount,date").eq("user_id",user.id).limit(10000);if(error)throw error;const sig=x=>[x.name,x.category,Number(x.amount).toFixed(2),new Date(x.date).toISOString()].join("|");const seen=new Set((data||[]).map(sig)),fresh=[];for(const x of records){const k=sig(x);if(!seen.has(k)){seen.add(k);fresh.push({...x,user_id:user.id})}}if(!fresh.length){notice("所有导入账单已存在，无需再次导入");return}if(!confirm(`将新增 ${fresh.length} 笔到云端，不删除已有记录。请确认已做备份。`))return;let imported=0;for(let i=0;i<fresh.length;i+=100){const{error:e2}=await db.from("expenses").insert(fresh.slice(i,i+100));if(e2)throw Error(`已成功导入 ${imported} 笔后中断：`+e2.message);imported+=Math.min(100,fresh.length-i)}await load();notice(`成功导入 ${imported} 笔账单`)}catch(err){notice("导入失败："+errMessage(err),true)}finally{e.target.value=""}};
+(async()=>{if(!window.supabase?.createClient){notice("Supabase JavaScript 加载失败，请检查网络",true);return}db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);$("month").value=ym(new Date());$("expenseDate").value=localTime(new Date());db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){++requestVersion;sessionUI(null)}else if(event==="SIGNED_IN"&&session?.user&&user?.id!==session.user.id){sessionUI(session.user);setTimeout(load,0)}});const {data,error}=await db.auth.getUser();if(!error&&data.user){sessionUI(data.user);await load()}else sessionUI(null)})().catch(e=>notice(errMessage(e),true));
+</script></body></html>
