@@ -3,60 +3,66 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>我的记账本</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的智能记账本</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#f3f6fc;color:#18243b;font-family:-apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif}
-.container{max-width:750px;margin:auto;padding:20px}
-h1{font-size:25px;margin:0 0 8px}
-.subtitle{color:#728096;font-size:14px;margin-bottom:24px}
-.summary{background:linear-gradient(125deg,#2563eb,#7145d9);color:white;border-radius:20px;padding:28px;box-shadow:0 10px 25px #2455c02a}
-.summary p{opacity:.85}
-.total{font-size:38px;font-weight:750;margin:14px 0}
-.panel{background:white;margin-top:20px;padding:22px;border-radius:18px;box-shadow:0 3px 15px #172d4d0b}
-h2{font-size:19px;margin:0 0 20px}
-label{display:block;font-size:14px;font-weight:600;margin:14px 0 8px}
-input,select{width:100%;padding:13px;border:1px solid #dce3ee;border-radius:10px;background:white;font-size:16px;outline:none}
-input:focus,select:focus{border-color:#2563eb}
+body{margin:0;background:#f3f6fc;color:#1e293b;font-family:-apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif}
+main{max-width:760px;margin:auto;padding:20px}
+h1{font-size:25px;margin:0 0 6px}
+h2{font-size:19px;margin:0 0 18px}
+p{margin:8px 0}
+.sub{color:#64748b;font-size:14px;margin-bottom:22px}
+.card{background:#fff;border-radius:18px;padding:22px;margin-top:20px;box-shadow:0 3px 15px #182b4d0a}
+.hero{background:linear-gradient(125deg,#2563eb,#7446dc);color:white;border-radius:20px;padding:28px}
+.hero small{opacity:.85}
+.total{font-size:38px;font-weight:750;margin:12px 0}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-button{cursor:pointer;border:0;border-radius:10px;font-size:15px}
-.add{width:100%;margin-top:22px;padding:15px;background:#2563eb;color:white;font-weight:bold}
-.add:hover{background:#1d4ed8}
-.item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid #edf0f5}
-.item:last-child{border:0}
-.item-title{font-weight:600;overflow-wrap:anywhere}
-.meta{font-size:12px;color:#8390a1;margin-top:6px}
-.item-right{display:flex;align-items:center;gap:14px}
-.price{font-weight:bold;white-space:nowrap}
-.del{background:#fff1f2;color:#e11d48;padding:8px 10px}
-.empty{text-align:center;color:#8b96a7;padding:30px 0}
-.footer{text-align:center;color:#96a0af;font-size:12px;padding:30px}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 7px}
+input,select{width:100%;padding:12px;border:1px solid #d9e2ef;border-radius:10px;background:white;font-size:16px;color:#1e293b}
+button{border:0;border-radius:10px;padding:12px;cursor:pointer;font-size:14px}
+.primary{background:#2563eb;color:white;font-weight:650;width:100%;margin-top:20px}
+.primary:hover{background:#1d4ed8}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.secondary{background:#eff6ff;color:#1d4ed8;font-weight:600}
+.danger{background:#fff1f2;color:#e11d48;padding:8px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #edf2f7}
+.row:last-child{border-bottom:0}
+.name{font-weight:600;overflow-wrap:anywhere}
+.meta{font-size:12px;color:#8491a5;margin-top:5px}
+.right{display:flex;align-items:center;gap:12px}
+.amount{font-weight:700;white-space:nowrap}
+.bar{height:9px;background:#edf2f7;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.fill{height:100%;background:linear-gradient(90deg,#2563eb,#8b5cf6);border-radius:20px}
+.empty{text-align:center;color:#94a3b8;padding:22px}
+.note{font-size:12px;color:#64748b;line-height:1.8}
+footer{text-align:center;color:#94a3b8;font-size:12px;padding:30px}
 @media(max-width:480px){
-.container{padding:15px}
-.grid{grid-template-columns:1fr}
+main{padding:14px}
+.grid,.actions{grid-template-columns:1fr}
+.hero{padding:23px}
 .total{font-size:34px}
 }
 </style>
 </head>
 <body>
-<div class="container">
-<h1>💰 我的记账本</h1>
-<div class="subtitle">认真记录每一笔，让生活更有计划</div>
+<main>
+<h1>💰 我的智能记账本</h1>
+<div class="sub">记录日常消费，让每一笔支出都有迹可循</div>
 
-<div class="summary">
-<p>累计总支出</p>
-<div class="total" id="total">¥ 0.00</div>
-<div id="count">已记录 0 笔消费</div>
-</div>
+<section class="hero">
+<small>累计总支出</small>
+<div class="total" id="total">¥0.00</div>
+<div id="count">共 0 笔记录</div>
+</section>
 
-<div class="panel">
-<h2>✏️ 记一笔消费</h2>
-<form id="expenseForm">
+<section class="card">
+<h2>✏️ 记录一笔消费</h2>
+<form id="form">
 <div class="grid">
 <div>
 <label for="amount">消费金额（元）</label>
-<input id="amount" type="number" min="0.01" step="0.01" placeholder="例如：35.50" required>
+<input id="amount" type="number" min="0.01" max="999999999" step="0.01" required placeholder="例如 35.50">
 </div>
 <div>
 <label for="category">消费分类</label>
@@ -70,120 +76,285 @@ button{cursor:pointer;border:0;border-radius:10px;font-size:15px}
 </div>
 </div>
 <label for="name">消费项目</label>
-<input id="name" type="text" maxlength="60" placeholder="例如：午餐、超市购物" required>
-<button class="add" type="submit">＋ 添加消费记录</button>
+<input id="name" type="text" maxlength="60" required placeholder="例如 午餐">
+<button class="primary" type="submit">＋ 添加消费记录</button>
 </form>
-</div>
+</section>
 
-<div class="panel">
-<h2>📋 消费记录</h2>
+<section class="card">
+<h2>📅 每月支出统计</h2>
+<label for="month">选择月份</label>
+<input type="month" id="month">
+<div class="grid" style="margin-top:18px">
+<div>
+<div class="note">当月总支出</div>
+<h2 id="monthTotal">¥0.00</h2>
+</div>
+<div>
+<div class="note">当月消费笔数</div>
+<h2 id="monthCount">0 笔</h2>
+</div>
+</div>
+<h2 style="margin-top:16px">分类支出</h2>
+<div id="categoryStats"></div>
+</section>
+
+<section class="card">
+<h2>📋 当月消费明细</h2>
 <div id="records"></div>
-</div>
+</section>
 
-<div class="footer">我的私人记账本 · 数据保存在当前浏览器</div>
+<section class="card">
+<h2>💾 账单备份与恢复</h2>
+<div class="actions">
+<button class="secondary" id="csvBtn" type="button">导出 Excel 账单（CSV）</button>
+<button class="secondary" id="jsonBtn" type="button">下载完整备份（JSON）</button>
 </div>
+<label for="backup">导入 JSON 备份恢复记录</label>
+<input type="file" id="backup" accept=".json,application/json">
+<p class="note">CSV 用来在 Excel 中查看账单；JSON 用来完整恢复账单。导入会替换当前所有记录，请先备份现有数据。备份文件可能包含私人消费信息，请妥善保管。</p>
+</section>
+
+<footer>我的记账本 · 本地保存 · 记得定期备份</footer>
+</main>
 
 <script>
-const storageKey = "my-expenses-v1";
+const KEY = "my-expenses-v1";
+const categories = ["餐饮","购物","交通","娱乐","其他"];
 let expenses = [];
 
 try {
-  const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
-  if (Array.isArray(saved)) expenses = saved;
-} catch (e) {
-  console.warn("读取记录失败", e);
+  const old = JSON.parse(localStorage.getItem(KEY) || "[]");
+  if (Array.isArray(old)) expenses = old;
+} catch(e) {
+  alert("读取旧账单失败，请勿清理浏览器数据。");
 }
 
-const money = n => "¥ " + Number(n).toFixed(2);
+const $ = id => document.getElementById(id);
+const money = n => "¥" + Number(n).toFixed(2);
+const sum = items => items.reduce((s,x) => s + Number(x.amount),0);
 
-function save() {
-  localStorage.setItem(storageKey, JSON.stringify(expenses));
+function newId(){
+  return crypto.randomUUID ? crypto.randomUUID() :
+    Date.now().toString(36)+Math.random().toString(36).slice(2);
 }
 
-function render() {
-  const list = document.getElementById("records");
+function getMonth(date){
+  const match = String(date).match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/);
+  return match ? match[1]+"-"+match[2].padStart(2,"0") : "";
+}
+
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(expenses));
+}
+
+function render(){
+  $("total").textContent = money(sum(expenses));
+  $("count").textContent = "共 "+expenses.length+" 笔记录";
+
+  const selected = $("month").value;
+  const monthly = expenses.filter(x => getMonth(x.date) === selected);
+  $("monthTotal").textContent = money(sum(monthly));
+  $("monthCount").textContent = monthly.length+" 笔";
+
+  const stats = $("categoryStats");
+  stats.replaceChildren();
+  const monthlyTotal = sum(monthly);
+
+  categories.forEach(cat=>{
+    const amount = sum(monthly.filter(x=>x.category===cat));
+    const pct = monthlyTotal ? amount/monthlyTotal*100 : 0;
+    const wrap = document.createElement("div");
+    const header = document.createElement("div");
+    header.style.cssText="display:flex;justify-content:space-between;font-size:14px";
+    const label = document.createElement("span");
+    label.textContent = cat;
+    const value = document.createElement("span");
+    value.textContent = money(amount);
+    header.append(label,value);
+
+    const bar = document.createElement("div");
+    bar.className="bar";
+    const fill = document.createElement("div");
+    fill.className="fill";
+    fill.style.width = pct+"%";
+    bar.appendChild(fill);
+    wrap.append(header,bar);
+    stats.appendChild(wrap);
+  });
+
+  const list=$("records");
   list.replaceChildren();
 
-  const total = expenses.reduce((sum, x) => sum + x.amount, 0);
-  document.getElementById("total").textContent = money(total);
-  document.getElementById("count").textContent =
-    "已记录 " + expenses.length + " 笔消费";
-
-  if (!expenses.length) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = "还没有消费记录，开始记第一笔吧！";
+  if(!monthly.length){
+    const empty=document.createElement("div");
+    empty.className="empty";
+    empty.textContent="这个月还没有消费记录";
     list.appendChild(empty);
-    return;
   }
 
-  expenses.forEach(x => {
-    const row = document.createElement("div");
-    row.className = "item";
+  monthly.forEach(x=>{
+    const row=document.createElement("div");
+    row.className="row";
 
-    const left = document.createElement("div");
-    const title = document.createElement("div");
-    title.className = "item-title";
-    title.textContent = x.name;
+    const left=document.createElement("div");
+    const title=document.createElement("div");
+    title.className="name";
+    title.textContent=x.name;
+    const meta=document.createElement("div");
+    meta.className="meta";
+    meta.textContent=x.category+" · "+x.date;
+    left.append(title,meta);
 
-    const meta = document.createElement("div");
-    meta.className = "meta";
-    meta.textContent = x.category + " · " + x.date;
-    left.append(title, meta);
-
-    const right = document.createElement("div");
-    right.className = "item-right";
-
-    const price = document.createElement("span");
-    price.className = "price";
-    price.textContent = "-" + money(x.amount);
-
-    const del = document.createElement("button");
-    del.className = "del";
-    del.textContent = "删除";
-    del.onclick = () => {
-      if (confirm("确定删除这条记录吗？")) {
-        expenses = expenses.filter(a => a.id !== x.id);
-        save();
-        render();
+    const right=document.createElement("div");
+    right.className="right";
+    const price=document.createElement("span");
+    price.className="amount";
+    price.textContent="-"+money(x.amount);
+    const del=document.createElement("button");
+    del.className="danger";
+    del.textContent="删除";
+    del.onclick=()=>{
+      if(confirm("确定删除这条记录吗？")){
+        const previous=expenses;
+        expenses=expenses.filter(a=>a.id!==x.id);
+        try{save();render()}
+        catch(e){expenses=previous;alert("保存失败，未删除记录")}
       }
     };
-    right.append(price, del);
-    row.append(left, right);
+    right.append(price,del);
+    row.append(left,right);
     list.appendChild(row);
   });
 }
 
-document.getElementById("expenseForm").addEventListener("submit", e => {
-  e.preventDefault();
-  const amount = Number(document.getElementById("amount").value);
-  const name = document.getElementById("name").value.trim();
-  const category = document.getElementById("category").value;
+const now = new Date();
+$("month").value =
+  now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+$("month").addEventListener("change",render);
 
-  if (!Number.isFinite(amount) || amount <= 0 || !name) {
-    alert("请填写正确的金额和消费项目");
+$("form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const amount=Number($("amount").value);
+  const name=$("name").value.trim();
+  const category=$("category").value;
+
+  if(!Number.isFinite(amount)||amount<=0||amount>999999999||!name){
+    alert("请正确填写金额和消费项目");
     return;
   }
 
-  const id = crypto.randomUUID ? crypto.randomUUID() :
-    Date.now().toString() + Math.random().toString();
+  const today=new Date();
+  const date=today.getFullYear()+"/"+(today.getMonth()+1)+"/"+
+    today.getDate()+" "+today.toLocaleTimeString("zh-CN",{hour12:false});
 
-  expenses.unshift({
-    id,
-    amount: Math.round(amount * 100) / 100,
+  const record={
+    id:newId(),
+    amount:Math.round(amount*100)/100,
     name,
     category,
-    date: new Date().toLocaleString("zh-CN")
-  });
+    date
+  };
 
-  try {
+  expenses.unshift(record);
+  try{
     save();
+    $("month").value=getMonth(date);
     render();
     e.target.reset();
-    document.getElementById("amount").focus();
-  } catch (err) {
+  }catch(err){
     expenses.shift();
-    alert("保存失败，请检查浏览器存储空间或隐私设置");
+    alert("保存失败，请检查浏览器存储空间");
+  }
+});
+
+function download(filename,content,type){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),3000);
+}
+
+$("jsonBtn").onclick=()=>{
+  download(
+    "记账完整备份.json",
+    JSON.stringify(expenses,null,2),
+    "application/json;charset=utf-8"
+  );
+};
+
+function csvCell(value){
+  let text=String(value??"");
+  if(/^[\s]*[=+\-@\t\r]/.test(text)) text="'"+text;
+  return '"'+text.replace(/"/g,'""')+'"';
+}
+
+$("csvBtn").onclick=()=>{
+  const rows=[["日期","项目","分类","金额"]];
+  expenses.forEach(x=>rows.push([x.date,x.name,x.category,x.amount]));
+  const csv="\uFEFF"+rows.map(row=>row.map(csvCell).join(",")).join("\r\n");
+  download("我的消费账单.csv",csv,"text/csv;charset=utf-8");
+};
+
+$("backup").addEventListener("change",async e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  try{
+    if(file.size>5*1024*1024)throw Error("备份文件过大");
+    const data=JSON.parse(await file.text());
+    if(!Array.isArray(data)||data.length>10000)
+      throw Error("文件格式错误");
+
+    const ids=new Set();
+    const cleaned=data.map(x=>{
+      if(!x||typeof x!=="object")
+        throw Error("记录格式错误");
+
+      const amount=Number(x.amount);
+      if(!Number.isFinite(amount)||amount<=0||amount>999999999||
+         typeof x.name!=="string"||!x.name.trim()||x.name.length>60||
+         !categories.includes(x.category)||
+         typeof x.date!=="string"||!getMonth(x.date))
+        throw Error("账单内容有错误");
+
+      const id=typeof x.id==="string"&&x.id&&!ids.has(x.id)?
+        x.id:newId();
+      ids.add(id);
+
+      return {
+        id,
+        amount,
+        name:x.name,
+        category:x.category,
+        date:x.date
+      };
+    });
+
+    if(!confirm(
+      "将用备份中的 "+cleaned.length+
+      " 笔记录替换当前全部记录。请确认已经备份当前账单。是否继续？"
+    ))return;
+
+    const previous=expenses;
+    expenses=cleaned;
+
+    try{
+      save();
+      render();
+      alert("恢复成功，共 "+expenses.length+" 笔记录！");
+    }catch(err){
+      expenses=previous;
+      alert("保存失败，原记录未被替换");
+    }
+  }catch(err){
+    alert("导入失败："+err.message);
+  }finally{
+    e.target.value="";
   }
 });
 
