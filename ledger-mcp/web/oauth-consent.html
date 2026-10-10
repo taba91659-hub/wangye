@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; connect-src https://joyqlelzapraawudhuxn.supabase.co; img-src 'self'; base-uri 'none'; form-action 'none'">
+<title>授权只读查询 · 我的记账本</title>
+<link rel="stylesheet" href="./oauth-consent.css">
+</head>
+<body>
+<main>
+  <p class="eyebrow">我的智能记账本</p>
+  <h1>连接 ChatGPT，查询我的账单</h1>
+  <p>授权后可以查询账单、统计支出。本次连接不能添加、修改或删除账单，也不能访问预算。</p>
+  <p id="status" role="status" aria-live="polite">正在检查授权请求…</p>
+  <form id="login" hidden>
+    <h2>登录你的记账账号</h2>
+    <p>使用平时登录记账本的邮箱和密码。密码只发送给你的 Supabase 登录服务。</p>
+    <label for="email">邮箱</label><input id="email" type="email" autocomplete="username" required maxlength="254">
+    <label for="password">密码</label><input id="password" type="password" autocomplete="current-password" required>
+    <button id="login-button" type="submit">登录并查看授权内容</button>
+  </form>
+  <section id="consent" hidden>
+    <dl>
+      <dt>当前记账账号</dt><dd id="account"></dd>
+      <dt>申请连接的应用</dt><dd id="client"></dd>
+      <dt>授权后返回</dt><dd id="redirect"></dd>
+      <dt>身份信息权限</dt><dd id="scope"></dd>
+    </dl>
+    <div class="permission"><strong>仅可读取</strong><ul><li>你自己的账单明细</li><li>指定日期范围的支出总额和分类统计</li></ul></div>
+    <div class="buttons"><button id="approve" type="button">同意只读连接</button><button id="deny" class="secondary" type="button">拒绝</button></div>
+  </section>
+  <button id="signout" class="secondary" type="button" hidden>退出此授权页账号</button>
+  <p class="footnote">只有你点击同意后才会批准本次请求。授权页使用独立的临时登录会话。</p>
+  <a href="./index.html">返回记账本</a>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" defer></script>
+<script src="./oauth-consent.js" defer></script>
+</body>
+</html>

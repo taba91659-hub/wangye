@@ -1,0 +1,19 @@
+{
+  "name": "personal-ledger-mcp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test --test-isolation=none tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.3.1",
+    "@supabase/middleware": "1.0.0",
+    "@supabase/server": "1.9.1",
+    "@supabase/supabase-js": "2.117.3",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "jose": "6.2.12"
+  }
+}
