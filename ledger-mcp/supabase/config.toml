@@ -1,0 +1,3 @@
+[functions.ledger-mcp]
+# OAuth discovery must be public; the handler verifies user tokens itself.
+verify_jwt = false
