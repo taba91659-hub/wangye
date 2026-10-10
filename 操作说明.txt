@@ -1,0 +1,20 @@
+# 智能云端记账本 2.2 · 手机桌面 PWA
+
+此升级包需要将以下 **全部文件和文件夹保持原路径** 上传到 GitHub 仓库 `taba91659-hub/wangye` 的根目录（main 分支）：
+
+- `index.html`（覆盖旧网页）
+- `manifest.webmanifest`
+- `sw.js`
+- `offline.html`
+- `icons/icon-192.png`
+- `icons/icon-512.png`
+- `icons/icon-maskable-512.png`
+- `icons/apple-touch-icon.png`
+
+上传方法：仓库 → Add file → Upload files → 将解压后全部上述文件拖入上传区（保留 icons 子文件夹）→ Commit changes。
+首次提交后在手机浏览器打开 https://taba91659-hub.github.io/wangye/ ，进入「我的」查看安装指引。
+
+Android：Chrome 菜单 → 安装应用 / 添加到主屏幕；如页面显示安装按钮也可点击。
+iPhone：Safari 打开网站 → 分享 → 添加到主屏幕。
+
+**数据安全：** 不修改 Supabase expenses / monthly_budgets；不自动导入旧数据；离线不保存账单。最新账单请继续定期下载 JSON 备份。
