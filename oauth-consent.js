@@ -58,13 +58,13 @@
     callback(data.redirect_uri);
     if (!data.client?.id || !(await allowed(data.client.id))) throw Error('这个账号或应用尚未绑定到只读连接，请先完成部署配置。');
     clientId = data.client.id;
-    $('approve').textContent = '同意只读连接';
+    $('approve').textContent = '同意连接';
     $('deny').textContent = '拒绝';
     $('account').textContent = userData.user.email || '当前登录账号';
     $('client').textContent = data.client.name || '未命名应用';
     $('redirect').textContent = new URL(data.redirect_uri).origin;
     $('scope').textContent = data.scope || '未请求额外身份信息';
-    $('consent').hidden = false; status('请核对账号与申请应用，再决定是否允许只读访问。');
+    $('consent').hidden = false; status('请核对账号、申请应用和连接范围，再决定是否授权。');
   }
   $('login').addEventListener('submit', async event => {
     event.preventDefault(); if (busy) return; lock(true);

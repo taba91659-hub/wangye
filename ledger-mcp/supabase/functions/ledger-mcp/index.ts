@@ -30,7 +30,7 @@ const RESOURCE = PROJECT + '/functions/v1/ledger-mcp';
 const secured = withOAuthProtectedResource({ resourceServer: RESOURCE, authorizationServer: PROJECT + '/auth/v1' },
 withSupabase({ auth: 'user', audience: RESOURCE, issuer: PROJECT + '/auth/v1' }, async (req, { supabase }) => {
   const handler = createMcpHandler(() => {
-    const server = new McpServer({ name: 'personal-ledger-readonly', version: '1.0.0' });
+    const server = new McpServer({ name: 'personal-ledger', version: '2.0.0' });
     const call = async (operation: 'list' | 'summary', args: {start:string;end:string;category?:string;limit?:number;offset?:number}) => {
       const { data: allowed, error: accessError } = await supabase.rpc('ledger_mcp_access_allowed');
       if (accessError || allowed !== true) return {
@@ -51,6 +51,31 @@ withSupabase({ auth: 'user', audience: RESOURCE, issuer: PROJECT + '/auth/v1' },
       title: '统计我的支出', description: '在数据库内精确汇总整个日期范围的支出，返回人民币金额与分类合计。不要把明细的一页当作总额。',
       inputSchema: summarySchema, annotations, _meta: { securitySchemes },
     }, args => call('summary', args));
+    const draftCall = async (rpc: string, input: Record<string, unknown>) => {
+      const { data, error } = await supabase.rpc(rpc, input);
+      if (error) return { isError: true, content: [{ type: 'text' as const,
+        text: error.code === '42501' ? '当前账号尚未启用草稿功能或没有权限。'
+          : '草稿请求失败。请检查金额、日期、请求编号，或检查草稿是否过期；不能据此宣称已保存。' }] };
+      const result = { ...data, confirmation_url: data?.draft_id
+        ? 'https://taba91659-hub.github.io/wangye/expense-confirm.html#draft=' + encodeURIComponent(data.draft_id) : undefined };
+      return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] };
+    };
+    server.registerTool('prepare_expense', {
+      title: '准备一笔账单，等待本人确认',
+      description: '仅创建草稿，不直接记账。先询问缺失或含糊的名称、金额、分类和北京时间日期。每笔独立记账意图生成一个UUID request_id，同次重试必须沿用，变更内容使用新ID。展示返回的全部字段和确认链接，请用户本人打开并点击确认保存。用户没点保存前不得声称已记账，也不能代用户操作确认页。',
+      inputSchema: z.object({
+        request_id: z.string().uuid(), name: z.string().trim().min(1).max(60).regex(/^[^\u0000-\u001f\u007f]+$/),
+        amount_yuan: z.string().regex(/^[0-9]{1,9}(\.[0-9]{1,2})?$/).refine(v => Number(v)>0 && Number(v)<=999999999),
+        category: z.enum(['餐饮','购物','交通','娱乐','其他']), date,
+      }).strict(),
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      _meta: { securitySchemes },
+    }, args => draftCall('ledger_mcp_prepare_expense', {p_request_id:args.request_id,p_name:args.name,
+      p_amount:args.amount_yuan,p_category:args.category,p_date:args.date}));
+    server.registerTool('get_expense_draft', {
+      title: '检查账单是否已确认保存', description: '读取自己草稿的状态。只有 status=saved 才可告知已保存；awaiting_user_confirmation 表示还未记账，expired 需要重新准备草稿。',
+      inputSchema: z.object({draft_id:z.string().uuid()}).strict(), annotations, _meta:{securitySchemes},
+    }, args => draftCall('ledger_mcp_get_draft',{p_draft_id:args.draft_id}));
     return server;
   });
   return handler.fetch(req);
