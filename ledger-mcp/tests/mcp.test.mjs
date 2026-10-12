@@ -56,13 +56,13 @@ test('MCP rejects forged, expired, wrong issuer and wrong audience tokens',async
   for(const jwt of ['invalid',await token({exp:1}),await token({iss:'https://other.example/auth'}),await token({aud:'authenticated'})])
     assert.equal((await request('tools/list',{},jwt)).status,401);
 });
-test('MCP initializes and exposes exactly two read-only tools',async()=>{
+test('MCP exposes queries, draft preparation and status, but never a confirmation tool',async()=>{
   const jwt=await token();
   const init=await rpcBody(await request('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'test',version:'1'}},jwt));
   assert.ok(init.result?.serverInfo,JSON.stringify(init));
   const result=await rpcBody(await request('tools/list',{},jwt));
-  assert.deepEqual(result.result.tools.map(t=>t.name).sort(),['list_expenses','summarize_expenses']);
-  for(const tool of result.result.tools) assert.equal(tool.annotations.readOnlyHint,true);
+  assert.deepEqual(result.result.tools.map(t=>t.name).sort(),['get_expense_draft','list_expenses','prepare_expense','summarize_expenses']);
+  for(const tool of result.result.tools) assert.equal(tool.annotations.readOnlyHint,tool.name!=='prepare_expense');
 });
 test('MCP validates dates and rejects user_id injection before database query',async()=>{
   const jwt=await token();
@@ -79,6 +79,17 @@ test('MCP passes caller token to fixed RPC and returns summary',async()=>{
   assert.equal(JSON.parse(result.result.content[0].text).total_yuan,'0.30');
   assert.equal(rpcCalls.length,2);assert.equal(rpcCalls[1].authorization,'Bearer '+jwt);
   assert.equal(rpcCalls[1].body.p_mode,'summary');assert.equal('user_id' in rpcCalls[1].body,false);
+});
+test('MCP drafts validate input and forward only fixed RPC fields with caller credentials',async()=>{
+  const jwt=await token();
+  const args={request_id:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',name:'午餐',amount_yuan:'12.30',category:'餐饮',date:'2026-10-01'};
+  for(const invalid of [{...args,amount_yuan:'1.001'},{...args,user_id:'spoof'},{...args,date:'2026-02-30'}]){
+    rpcCalls=[];const result=await rpcBody(await request('tools/call',{name:'prepare_expense',arguments:invalid},jwt));
+    assert.ok(result.error||result.result?.isError);assert.equal(rpcCalls.length,0);
+  }
+  rpcCalls=[];await request('tools/call',{name:'prepare_expense',arguments:args},jwt);
+  assert.equal(rpcCalls.length,1);assert.ok(rpcCalls[0].url.endsWith('/ledger_mcp_prepare_expense'));
+  assert.equal(rpcCalls[0].authorization,'Bearer '+jwt);assert.equal(rpcCalls[0].body.p_amount,'12.30');
 });
 test('MCP revoked connection blocks query RPC',async()=>{
   allow=false;rpcCalls=[];

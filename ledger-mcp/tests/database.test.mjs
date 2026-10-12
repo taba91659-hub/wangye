@@ -40,12 +40,12 @@ await db.exec(migration);
 await db.exec(migration); // repeated application preserves original policies and data
 await db.query('insert into ledger_mcp_private.connection values(true,$1,$2,true)',[alice,client]);
 await db.exec(await readFile(new URL('../supabase/04-token-audience.sql',import.meta.url),'utf8'));
-async function asUser(uid, cid, fn) {
+async function asUser(uid, cid, fn, persist=false) {
   await db.exec('begin; set local role authenticated;');
   try {
     await db.query("select set_config('request.jwt.claims',$1,true)",[JSON.stringify({sub:uid,...(cid?{client_id:cid}:{})})]);
     return await fn();
-  } finally { await db.exec('rollback'); }
+  } finally { await db.exec(persist?'commit':'rollback'); }
 }
 const query = (mode='summary',start='2026-10-01',end='2026-11-01',category=null,limit=30,offset=0) =>
   db.query('select public.ledger_mcp_query($1,$2,$3,$4,$5,$6) as result',[mode,start,end,category,limit,offset]);
@@ -112,6 +112,54 @@ test('SQL: audience hook preserves web and unrelated client tokens, binds exact 
   assert.equal(result.claims.client_id,client);
   assert.deepEqual(await run(result),result);
   await assert.rejects(asUser(alice,null,()=>db.query('select ledger_mcp_token_hook($1)',[event])),/permission denied/);
+});
+test('Draft SQL: disabled by default; rejects invalid inputs and client/account spoofing',async()=>{
+  const sql=await readFile(new URL('../supabase/05-confirmed-expenses.sql',import.meta.url),'utf8');
+  await db.exec(sql);await db.exec(sql);
+  const args=['aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','午餐','12.30','餐饮','2026-10-01'];
+  const prepare=()=>db.query('select ledger_mcp_prepare_expense($1,$2,$3,$4,$5) result',args);
+  await assert.rejects(asUser(alice,client,prepare),/not enabled/);
+  await db.exec('update ledger_mcp_private.connection set drafts_enabled=true');
+  for(const [uid,cid] of [[bob,client],[alice,'wrong'],[alice,null]])await assert.rejects(asUser(uid,cid,prepare),/not enabled/);
+  for(const amount of ['0','-1','0.001','NaN','1e2','999999999.99']) {
+    args[2]=amount;await assert.rejects(asUser(alice,client,prepare),/Invalid/);
+  }
+  args[2]='12.30';args[4]='2999-01-01';await assert.rejects(asUser(alice,client,prepare),/Invalid/);
+  args[4]='2026-10-01';args[1]=' ';await assert.rejects(asUser(alice,client,prepare),/Invalid/);
+});
+let savedDraft;
+test('Draft SQL: idempotent prepare does not write expenses; conflicting retry rejected',async()=>{
+  const before=(await db.query('select count(*) from expenses')).rows[0].count;
+  const prepare=name=>db.query("select ledger_mcp_prepare_expense('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',$1,'12.30','餐饮','2026-10-01') result",[name]);
+  savedDraft=(await asUser(alice,client,()=>prepare('午餐'),true)).rows[0].result.draft_id;
+  const retry=(await asUser(alice,client,()=>prepare('午餐'),true)).rows[0].result;
+  assert.equal(retry.draft_id,savedDraft);assert.equal(retry.status,'awaiting_user_confirmation');
+  assert.equal((await db.query('select count(*) from expenses')).rows[0].count,before);
+  await assert.rejects(asUser(alice,client,()=>prepare('不同内容')),/different expense/);
+});
+test('Draft SQL: OAuth cannot confirm, other user cannot view/confirm, expiry enforced',async()=>{
+  const confirm=()=>db.query('select ledger_mcp_confirm_expense($1)',[savedDraft]);
+  await assert.rejects(asUser(alice,client,confirm),/Confirm on the website/);
+  await assert.rejects(asUser(bob,null,confirm),/disabled/);
+  await assert.rejects(asUser(bob,client,()=>db.query('select ledger_mcp_get_draft($1)',[savedDraft])),/unavailable/);
+  await db.query("update ledger_mcp_private.expense_drafts set expires_at=now()-interval '1 minute' where id=$1",[savedDraft]);
+  await assert.rejects(asUser(alice,null,confirm),/expired/);
+  await db.query("update ledger_mcp_private.expense_drafts set expires_at=now()+interval '15 minutes' where id=$1",[savedDraft]);
+});
+test('Draft SQL: same confirmation twice creates exactly one exact expense; direct OAuth write still denied',async()=>{
+  const confirm=()=>db.query('select ledger_mcp_confirm_expense($1) result',[savedDraft]);
+  const first=(await asUser(alice,null,confirm,true)).rows[0].result;
+  const retry=(await asUser(alice,null,confirm,true)).rows[0].result;
+  assert.equal(first.expense_id,retry.expense_id);assert.equal(first.already_saved,false);assert.equal(retry.already_saved,true);
+  const rows=(await db.query('select name,amount::text,user_id,date from expenses where id=$1',[first.expense_id])).rows;
+  assert.equal(rows.length,1);assert.equal(rows[0].amount,'12.30');assert.equal(rows[0].user_id,alice);
+  assert.equal(new Date(rows[0].date).toISOString(),'2026-09-30T16:00:00.000Z');
+  const status=(await asUser(alice,client,()=>db.query('select ledger_mcp_get_draft($1) result',[savedDraft]))).rows[0].result;
+  assert.equal(status.status,'saved');
+  await assert.rejects(asUser(alice,client,()=>db.query('insert into expenses(user_id,amount) values($1,1)',[alice])),/row-level security/);
+  await db.exec('update ledger_mcp_private.connection set drafts_enabled=false');
+  await assert.rejects(asUser(alice,null,confirm),/disabled/);
+  assert.equal((await asUser(alice,client,()=>query())).rows.length,1);
 });
 test('SQL: disabling connection immediately denies further reads',async()=>{
   await db.exec('update ledger_mcp_private.connection set enabled=false');

@@ -11,7 +11,7 @@ async function page(options={}) {
     getUser:async()=>({data:{user:{email:'test@example.invalid'}}}),
     signInWithPassword:async()=>({error:options.loginError}),
     signOut:async()=>{},oauth:{
-      getAuthorizationDetails:async()=>({data:{authorization_id:'test-request',client:{id:'test-client',name:'Test'},redirect_uri:options.callback??callback,scope:''}}),
+      getAuthorizationDetails:async()=>({data:options.details??{authorization_id:'test-request',client:{id:'test-client',name:'Test'},redirect_uri:options.callback??callback,scope:''}}),
       approveAuthorization:async()=>{approved++;return{data:{redirect_url:callback+'?code=test'}};},
       denyAuthorization:async()=>{denied++;return{data:{redirect_url:callback+'?error=access_denied'}};},
     }
@@ -42,5 +42,24 @@ test('Consent: rejected login clears password field',async()=>{
 test('Consent: duplicate or absent authorization IDs fail closed',async()=>{
   for(const search of ['', '?authorization_id=test-request&authorization_id=another-request']) {
     const p=await page({search});assert.equal(p.configuration,undefined);assert.equal(p.redirect,null);
+  }
+});
+test('Existing grant: continues only after explicit click without granting again',async()=>{
+  const p=await page({details:{redirect_url:callback+'?code=test&state=test'}});
+  assert.equal(p.redirect,null);assert.equal(p.node('consent').hidden,false);
+  await p.node('approve').events.click();assert.equal(p.redirect,callback+'?code=test&state=test');assert.equal(p.approved,0);
+});
+test('Existing grant: rejects foreign redirect and unbound account',async()=>{
+  for(const options of [{details:{redirect_url:'https://evil.example/'}},{details:{redirect_url:callback},allowed:false}]){
+    const p=await page(options);await p.node('approve').events.click();assert.equal(p.redirect,null);assert.equal(p.node('consent').hidden,true);
+  }
+});
+test('Existing grant: revokes only specified client and reports failure honestly',async()=>{
+  for(const fail of [false,true]){
+    const p=await page({details:{redirect_url:callback}});let revoked=null;
+    p.db.auth.oauth.revokeGrant=async options=>{revoked=options.clientId;return {error:fail?{}:null};};
+    await p.node('deny').events.click();assert.equal(revoked,'9613b45d-a946-494f-a3d4-a91b784b7eca');
+    assert.equal(p.redirect,null);assert.equal(p.node('consent').hidden,!fail);assert.equal(p.approved,0);
+    assert.match(p.node('status').textContent,fail?/撤销未完成/:/已撤销/);
   }
 });
