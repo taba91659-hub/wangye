@@ -61,8 +61,8 @@ test('MCP exposes queries, draft preparation and status, but never a confirmatio
   const init=await rpcBody(await request('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'test',version:'1'}},jwt));
   assert.ok(init.result?.serverInfo,JSON.stringify(init));
   const result=await rpcBody(await request('tools/list',{},jwt));
-  assert.deepEqual(result.result.tools.map(t=>t.name).sort(),['get_expense_draft','list_expenses','prepare_expense','summarize_expenses']);
-  for(const tool of result.result.tools) assert.equal(tool.annotations.readOnlyHint,tool.name!=='prepare_expense');
+  assert.deepEqual(result.result.tools.map(t=>t.name).sort(),['get_expense_deletion','get_expense_draft','list_expenses','prepare_expense','prepare_expense_deletion','summarize_expenses']);
+  for(const tool of result.result.tools) assert.equal(tool.annotations.readOnlyHint,!['prepare_expense','prepare_expense_deletion'].includes(tool.name));
 });
 test('MCP validates dates and rejects user_id injection before database query',async()=>{
   const jwt=await token();
@@ -90,6 +90,18 @@ test('MCP drafts validate input and forward only fixed RPC fields with caller cr
   rpcCalls=[];await request('tools/call',{name:'prepare_expense',arguments:args},jwt);
   assert.equal(rpcCalls.length,1);assert.ok(rpcCalls[0].url.endsWith('/ledger_mcp_prepare_expense'));
   assert.equal(rpcCalls[0].authorization,'Bearer '+jwt);assert.equal(rpcCalls[0].body.p_amount,'12.30');
+});
+test('MCP deletion validates exact IDs and forwards only fixed fields',async()=>{
+  const jwt=await token();
+  const args={request_id:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',expense_id:'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'};
+  for(const invalid of [{...args,expense_id:'wrong'},{...args,user_id:'other'}]){
+    rpcCalls=[];const result=await rpcBody(await request('tools/call',{name:'prepare_expense_deletion',arguments:invalid},jwt));
+    assert.ok(result.error||result.result?.isError);assert.equal(rpcCalls.length,0);
+  }
+  rpcCalls=[];await request('tools/call',{name:'prepare_expense_deletion',arguments:args},jwt);
+  assert.equal(rpcCalls.length,1);assert.ok(rpcCalls[0].url.endsWith('/ledger_mcp_prepare_deletion'));
+  assert.deepEqual(rpcCalls[0].body,{p_request_id:args.request_id,p_expense_id:args.expense_id});
+  assert.equal(rpcCalls[0].authorization,'Bearer '+jwt);
 });
 test('MCP revoked connection blocks query RPC',async()=>{
   allow=false;rpcCalls=[];
