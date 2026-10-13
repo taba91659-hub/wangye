@@ -9,7 +9,7 @@ const RESOURCE=PROJECT+'/functions/v1/ledger-mcp';
 const {privateKey,publicKey}=await generateKeyPair('ES256');
 const jwk=await exportJWK(publicKey); jwk.kid='local-test'; jwk.alg='ES256';
 const env={SUPABASE_URL:PROJECT,SUPABASE_PUBLISHABLE_KEY:'sb_publishable_local_test_only',SUPABASE_JWKS:JSON.stringify({keys:[jwk]})};
-let handler, allow=true, rpcCalls=[];
+let handler, allow=true, rpcCalls=[], addError=false;
 const originalFetch=globalThis.fetch;
 const originalDeno=globalThis.Deno;
 globalThis.Deno={env:{get:key=>env[key]},serve:fn=>{handler=fn}};
@@ -18,6 +18,7 @@ globalThis.fetch=async(input,init)=>{
   assert.ok(url.startsWith(PROJECT+'/rest/v1/rpc/'),'No real network call permitted: '+url);
   rpcCalls.push({url,body:JSON.parse(init.body),authorization:new Headers(init.headers).get('Authorization')});
   if(url.endsWith('/ledger_mcp_access_allowed')) return Response.json(allow);
+  if(url.endsWith('/ledger_mcp_chat_add_expense')) return addError?Response.json({message:'failed',code:'42501'},{status:403}):Response.json({status:'saved',currently_exists:true,expense_id:'test'});
   return Response.json({total_yuan:'0.30',count:'2',timezone:'Asia/Shanghai'});
 };
 const ts=await readFile(new URL('../supabase/functions/ledger-mcp/index.ts',import.meta.url),'utf8');
@@ -61,8 +62,8 @@ test('MCP exposes queries, draft preparation and status, but never a confirmatio
   const init=await rpcBody(await request('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'test',version:'1'}},jwt));
   assert.ok(init.result?.serverInfo,JSON.stringify(init));
   const result=await rpcBody(await request('tools/list',{},jwt));
-  assert.deepEqual(result.result.tools.map(t=>t.name).sort(),['get_expense_deletion','get_expense_draft','list_expenses','prepare_expense','prepare_expense_deletion','summarize_expenses']);
-  for(const tool of result.result.tools) assert.equal(tool.annotations.readOnlyHint,!['prepare_expense','prepare_expense_deletion'].includes(tool.name));
+  assert.deepEqual(result.result.tools.map(t=>t.name).sort(),['add_expense','get_expense_deletion','get_expense_draft','list_expenses','prepare_expense','prepare_expense_deletion','summarize_expenses']);
+  for(const tool of result.result.tools) assert.equal(tool.annotations.readOnlyHint,!['add_expense','prepare_expense','prepare_expense_deletion'].includes(tool.name));
 });
 test('MCP validates dates and rejects user_id injection before database query',async()=>{
   const jwt=await token();
@@ -102,6 +103,16 @@ test('MCP deletion validates exact IDs and forwards only fixed fields',async()=>
   assert.equal(rpcCalls.length,1);assert.ok(rpcCalls[0].url.endsWith('/ledger_mcp_prepare_deletion'));
   assert.deepEqual(rpcCalls[0].body,{p_request_id:args.request_id,p_expense_id:args.expense_id});
   assert.equal(rpcCalls[0].authorization,'Bearer '+jwt);
+});
+test('MCP chat add uses write annotation, validates fields, forwards JWT, handles errors without links',async()=>{
+ const jwt=await token();const args={request_id:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',name:'午餐',amount_yuan:'35.20',category:'餐饮',date:'2026-01-01'};
+ for(const bad of [{...args,user_id:'other'},{...args,amount_yuan:'0'},{...args,date:'2026-02-30'}]){
+ rpcCalls=[];const r=await rpcBody(await request('tools/call',{name:'add_expense',arguments:bad},jwt));assert.ok(r.error||r.result?.isError);assert.equal(rpcCalls.length,0);
+ }
+ rpcCalls=[];const r=await rpcBody(await request('tools/call',{name:'add_expense',arguments:args},jwt));
+ const data=JSON.parse(r.result.content[0].text);assert.equal(data.status,'saved');assert.equal('confirmation_url' in data,false);
+ assert.equal(rpcCalls.length,1);assert.equal(rpcCalls[0].authorization,'Bearer '+jwt);assert.equal(rpcCalls[0].body.p_request_id,args.request_id);
+ addError=true;const failure=await rpcBody(await request('tools/call',{name:'add_expense',arguments:args},jwt));assert.equal(failure.result.isError,true);addError=false;
 });
 test('MCP revoked connection blocks query RPC',async()=>{
   allow=false;rpcCalls=[];
