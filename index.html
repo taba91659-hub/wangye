@@ -61,6 +61,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 <style>
 :root{--theme-ink:#174C38;--theme-soft:#e6ecdf;--theme-wash:#faf9f4;background:var(--theme-wash)}body{background:var(--theme-wash);color:#202621}main{max-width:760px}header{padding:clamp(24px,7vh,85px) 0 12px}#homeActions{gap:0;max-width:none}#homeActions button{border:0;border-radius:0;min-height:67px;box-shadow:none;background:var(--theme-soft);color:#202621}#homeActions #addEntry{min-height:68px;border-radius:50px;background:var(--theme-ink);margin-bottom:17px;justify-content:center;color:white}#homeActions #addEntry b,#homeActions small{display:none}#homeActions #showSum{border-radius:22px 22px 0 0}#homeActions button:last-child{border-radius:0 0 22px 22px}#homeActions button:nth-child(n+3){border-top:1px solid #17282016}#homeActions i,#homeActions #addEntry i{color:inherit;background:transparent}#homeActions i{color:var(--theme-ink)}
 .hero,.primary,.fill{background:var(--theme-ink)}.secondary,.periods button,.back,.returnHome,.notice,.result-strip,.pill{background:var(--theme-soft);color:var(--theme-ink)}#search{background:var(--theme-wash);border:1px solid var(--theme-ink);border-radius:30px}summary,.money{color:var(--theme-ink)}:is(input,button,select,summary):focus-visible{outline-color:var(--theme-ink)}
+</style><style>
+body::after {
+  content: "";
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  height: env(safe-area-inset-bottom, 0px);
+  background: var(--theme-ink);
+  pointer-events: none;
+  z-index: 100;
+}
 </style></head>
 <body>
 
@@ -75,9 +86,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 
 <div class="page" data-page="home">
 <nav id="homeActions" aria-label="首页菜单"><button type="button" id="addEntry"><i aria-hidden="true">＋</i><span><strong>记一笔</strong><small>记录消费</small></span><b aria-hidden="true">›</b></button><button type="button" id="showSum"><i aria-hidden="true">Σ</i><span><strong>累计</strong><small>总支出与逐笔明细</small></span><b aria-hidden="true">›</b></button><button type="button" data-dest="bills"><i aria-hidden="true">⌕</i><span><strong>搜索</strong><small>按条件查找账单</small></span><b aria-hidden="true">›</b></button><button type="button" data-dest="charts"><i aria-hidden="true">▥</i><span><strong>统计</strong><small>分类占比与月度趋势</small></span><b aria-hidden="true">›</b></button><button type="button" data-dest="account"><i aria-hidden="true">◎</i><span><strong>我的</strong><small>账号、备份与导出</small></span><b aria-hidden="true">›</b></button></nav>
-<section class="hero" id="summaryPanel" hidden><button class="back" type="button">返回首页</button><div>累计总支出</div><div class="huge" id="total">¥0.00</div><button type="button" id="count" aria-expanded="false" aria-controls="expenseDetails">0 笔消费</button></section>
+<section class="hero" id="summaryPanel" hidden><div>累计总支出</div><div class="huge" id="total">¥0.00</div><button type="button" id="count" aria-expanded="false" aria-controls="expenseDetails">0 笔消费</button></section>
 <section id="expenseDetails" class="card" aria-label="消费明细" hidden><table><caption>消费明细</caption><thead><tr><th scope="col">日期</th><th scope="col">金额</th></tr></thead><tbody id="detailRows"></tbody></table><p id="detailEmpty" hidden>暂无消费记录</p></section>
-<section class="card" id="entryPanel" hidden><button class="back" type="button">返回首页</button><h2>✏️ <span id="formTitle">快速记一笔</span></h2>
+<section class="card" id="entryPanel" hidden><h2>✏️ <span id="formTitle">快速记一笔</span></h2>
 <form id="expenseForm"><div class="grid"><div><label for="amount">金额（元）</label><input id="amount" type="number" inputmode="decimal" required min="0.01" max="999999999" step="0.01" placeholder="例如：25.50"></div>
 <div><label for="category">消费分类</label><select id="category"><option>餐饮</option><option>购物</option><option>交通</option><option>娱乐</option><option>其他</option></select></div></div>
 <div class="grid"><div><label for="name">消费项目</label><input id="name" required maxlength="60" placeholder="例如：午餐"></div>
@@ -85,7 +96,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 <label for="place">地点（选填）</label><input id="place" maxlength="120" placeholder="输入地点，或使用当前位置"><button type="button" id="locate" class="secondary">使用当前位置</button><small id="geoStatus" role="status"></small><div class="actions" style="margin-top:16px"><button class="primary" type="submit" id="submitExpense">＋ 保存到云端</button><button class="secondary" type="button" id="cancelEdit" hidden>取消编辑</button></div></form></section>
 
 </div>
-<div class="page" data-page="bills" hidden><button class="returnHome">‹ 返回首页</button>
+<div class="page" data-page="bills" hidden>
 <section class="card"><h2>搜索账单</h2><p class="muted">可以跨月份搜索，也可以组合日期、分类和金额条件。</p>
 <div class="filter-tools">
 <div class="filter-wide"><label for="search">项目、分类或地点</label><input id="search" type="search" placeholder="例如：超市、午餐"></div>
@@ -99,10 +110,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 </details><div class="actions" style="margin-top:14px"><button id="useCurrentMonth" type="button" class="secondary">仅看统计月份</button><button id="clearFilters" type="button" class="secondary">清除所有筛选</button></div>
 <div class="result-strip"><span id="filteredSummary">正在加载账单…</span><span>☁️ 云端记录</span></div><div id="records"></div>
 </section></div>
-<div class="page" data-page="charts" hidden><button class="returnHome">‹ 返回首页</button>
+<div class="page" data-page="charts" hidden>
 <section class="card"><h2>支出统计</h2><p class="muted"><label for="month">统计月份</label><input id="month" type="month"></p>
 <div class="two"><div><h3>分类占比</h3><div id="donut" class="donut"></div><div id="legend"></div></div><div><h3>近6个月消费趋势</h3><div id="trend"></div></div></div></section></div>
-<div class="page" data-page="account" hidden><button class="returnHome">‹ 返回首页</button><section class="card"><button id="chooseTheme" class="secondary" aria-expanded="false" aria-controls="themeChoices">变色</button><div id="themeChoices" hidden aria-label="选择界面颜色"></div><small id="themeNote" role="status"></small></section>
+<div class="page" data-page="account" hidden><section class="card"><button id="chooseTheme" class="secondary" aria-expanded="false" aria-controls="themeChoices">变色</button><div id="themeChoices" hidden aria-label="选择界面颜色"></div><small id="themeNote" role="status"></small></section>
 <section class="card"><h2>我的账号</h2><div class="row"><div><strong>已登录</strong><div class="small" id="userEmail"></div></div><button type="button" class="secondary" id="logoutBtn">退出登录</button></div><button id="refreshBtn" type="button" class="secondary wide">↻ 刷新云端账单</button></section>
 
 <section class="card" id="installCard">
@@ -131,7 +142,7 @@ function notice(message,err=false){$("status").textContent=message;$("status").c
 function ym(d){const x=new Date(d);if(!Number.isFinite(x.getTime()))return "";return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")}
 function localTime(d){const x=new Date(d),pad=n=>String(n).padStart(2,"0");return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}T${pad(x.getHours())}:${pad(x.getMinutes())}`}
 function errMessage(e){return e?.message||"操作失败，请检查网络后重试"}
-function sessionUI(current){user=current||null;$("loginBox").hidden=!!user;$("app").hidden=!user;if(user){$("userEmail").textContent=user.email||"";switchTab("home");}else{expenses=[];budgets=[];editingId=null;notice("请登录后使用云端记账。")}}
+function sessionUI(current){user=current||null;$("loginBox").hidden=!!user;$("app").hidden=!user;if(user){$("userEmail").textContent=user.email||"";restoreRoute();}else{expenses=[];budgets=[];editingId=null;notice("请登录后使用云端记账。")}}
 async function load(){if(!user)return;const version=++requestVersion,uid=user.id;notice("正在读取云端账单…");const rows=[];for(let i=0;;i+=500){const er=await db.from("expenses").select("*").eq("user_id",uid).order("date",{ascending:false}).order("id").range(i,i+499);if(version!==requestVersion||user?.id!==uid)return;if(er.error){notice("读取失败："+errMessage(er.error),true);return}rows.push(...er.data);if(er.data.length<500)break}expenses=rows;notice("");render()}
 function setDetails(open){$("count").setAttribute("aria-expanded",String(open));$("expenseDetails").hidden=!open;const body=$("detailRows");body.replaceChildren();if(!open)return;$("detailEmpty").hidden=expenses.length!==0;const rows=document.createDocumentFragment();for(const x of expenses){const tr=document.createElement("tr");const day=document.createElement("td"),amount=document.createElement("td");day.textContent=localTime(x.date).slice(0,10);amount.textContent=money(x.amount);tr.append(day,amount);rows.append(tr)}body.append(rows)}
 $("count").onclick=()=>setDetails($("expenseDetails").hidden);
@@ -181,15 +192,15 @@ function renderRecords(){
 }
 let geoGeneration=0;
 function homeView(which){setDetails(false);geoGeneration++;$("geoStatus").textContent="";$("locate").disabled=false;$("homeActions").hidden=which!=="home";$("summaryPanel").hidden=which!=="summary";$("entryPanel").hidden=which!=="entry"}
-$("addEntry").onclick=()=>{cancelEdit();homeView("entry");$("amount").focus()};
-$("showSum").onclick=()=>homeView("summary");
-document.querySelectorAll(".back").forEach(b=>b.onclick=()=>{cancelEdit();homeView("home");$("addEntry").focus()});
+$("addEntry").onclick=()=>{navigate("entry");$("amount").focus()};
+$("showSum").onclick=()=>navigate("summary");
 $("locate").onclick=()=>{const n=++geoGeneration;if(!navigator.geolocation){$("geoStatus").textContent="设备不支持定位，可手动填写。";return}$("locate").disabled=true;$("geoStatus").textContent="正在定位…";navigator.geolocation.getCurrentPosition(p=>{if(n!==geoGeneration)return;$("place").value=p.coords.latitude.toFixed(4)+", "+p.coords.longitude.toFixed(4);$("geoStatus").textContent="已填入经纬度，可修改或清空。";$("locate").disabled=false},()=>{if(n!==geoGeneration)return;$("geoStatus").textContent="未取得位置，可手动填写或跳过。";$("locate").disabled=false},{timeout:10000})};
-function beginEdit(x){switchTab("home");homeView("entry");$("place").value=x.location_note||"";editingId=x.id;$("name").value=x.name;$("amount").value=x.amount;$("category").value=x.category;$("expenseDate").value=localTime(x.date);$("formTitle").textContent="编辑消费记录";$("submitExpense").textContent="保存修改";$("cancelEdit").hidden=false;$("expenseForm").closest("section").classList.add("editing");requestAnimationFrame(()=>$("expenseForm").scrollIntoView({behavior:"smooth",block:"center"}))}
+function beginEdit(x){navigate("entry",x.id)}
+function fillEdit(x){$("place").value=x.location_note||"";editingId=x.id;$("name").value=x.name;$("amount").value=x.amount;$("category").value=x.category;$("expenseDate").value=localTime(x.date);$("formTitle").textContent="编辑消费记录";$("submitExpense").textContent="保存修改";$("cancelEdit").hidden=false;$("expenseForm").closest("section").classList.add("editing");requestAnimationFrame(()=>$("expenseForm").scrollIntoView({behavior:"smooth",block:"center"}))}
 function cancelEdit(){editingId=null;$("expenseForm").reset();$("expenseDate").value=localTime(new Date());$("formTitle").textContent="记一笔消费";$("submitExpense").textContent="＋ 保存到云端";$("cancelEdit").hidden=true;$("expenseForm").closest("section").classList.remove("editing")}
 async function remove(id){if(!user||!confirm("确定删除这笔账单吗？"))return;const {error}=await db.from("expenses").delete().eq("id",id).eq("user_id",user.id);if(error){notice(errMessage(error),true);return}if(editingId===id)cancelEdit();await load()}
 $("cancelEdit").onclick=cancelEdit;
-$("expenseForm").onsubmit=async e=>{e.preventDefault();if(!user)return;const amount=Number($("amount").value),name=$("name").value.trim(),category=$("category").value,d=new Date($("expenseDate").value);if(!Number.isFinite(amount)||amount<=0||amount>999999999||!name||!cats.includes(category)||!Number.isFinite(d.getTime())){notice("请填写正确的金额、项目和时间",true);return}const values={amount:Math.round(amount*100)/100,name,category,date:d.toISOString()};const place=$("place").value.trim();if(place||editingId&&expenses.find(x=>x.id===editingId)?.location_note)values.location_note=place||null;notice("正在保存…");const {error}=editingId?await db.from("expenses").update(values).eq("id",editingId).eq("user_id",user.id):await db.from("expenses").insert({...values,user_id:user.id});if(error){notice("保存失败："+errMessage(error),true);return}cancelEdit();homeView("home");$("month").value=ym(d);await load();notice("已保存账单")};
+$("expenseForm").onsubmit=async e=>{e.preventDefault();if(!user)return;const amount=Number($("amount").value),name=$("name").value.trim(),category=$("category").value,d=new Date($("expenseDate").value);if(!Number.isFinite(amount)||amount<=0||amount>999999999||!name||!cats.includes(category)||!Number.isFinite(d.getTime())){notice("请填写正确的金额、项目和时间",true);return}const values={amount:Math.round(amount*100)/100,name,category,date:d.toISOString()};const place=$("place").value.trim();if(place||editingId&&expenses.find(x=>x.id===editingId)?.location_note)values.location_note=place||null;notice("正在保存…");const {error}=editingId?await db.from("expenses").update(values).eq("id",editingId).eq("user_id",user.id):await db.from("expenses").insert({...values,user_id:user.id});if(error){notice("保存失败："+errMessage(error),true);return}cancelEdit();if(history.state?.view==="entry")history.back();$("month").value=ym(d);await load();notice("已保存账单")};
 $("month").onchange=render;
 ["search","filterCategory","filterFrom","filterTo","amountMin","amountMax","filterSort"].forEach(id=>{
   $(id).addEventListener(id==="search"||id==="amountMin"||id==="amountMax"?"input":"change",renderRecords);
@@ -206,20 +217,32 @@ $("useCurrentMonth").onclick=()=>{
   $("filterTo").value=`${y}-${pad(m)}-${pad(new Date(y,m,0).getDate())}`;
   renderRecords();
 };
-document.querySelectorAll("[data-dest]").forEach(b=>b.onclick=()=>switchTab(b.dataset.dest));
-document.querySelectorAll(".returnHome").forEach(b=>b.onclick=()=>switchTab("home"));
+document.querySelectorAll("[data-dest]").forEach(b=>b.onclick=()=>navigate(b.dataset.dest));
 document.querySelectorAll("[data-period]").forEach(b=>b.onclick=()=>{const end=new Date(),start=new Date(end);if(b.dataset.period==="week")start.setDate(start.getDate()-6);if(b.dataset.period==="month")start.setDate(1);$("filterFrom").value=localTime(start).slice(0,10);$("filterTo").value=localTime(end).slice(0,10);renderRecords()});
-function switchTab(tab){homeView("home");
-  if(!["home","bills","charts","account"].includes(tab))tab="home";
-  document.querySelectorAll(".page").forEach(el=>el.hidden=el.dataset.page!==tab);
-  document.querySelectorAll(".tab-button").forEach(el=>{
-    const active=el.dataset.tab===tab;
-    el.classList.toggle("active",active);
-    el.setAttribute("aria-current",active?"page":"false");
-  });
-  window.scrollTo({top:0,behavior:"smooth"});
+const views = ["home", "entry", "summary", "bills", "charts", "account"];
+function navigate(view, expenseId = null) {
+  if (!user || !views.includes(view)) return;
+  history.pushState({ledgerUser: user.id, view, expenseId}, "");
+  restoreRoute();
 }
-document.querySelectorAll(".tab-button").forEach(el=>el.addEventListener("click",()=>switchTab(el.dataset.tab)));
+function restoreRoute() {
+  if (!user) return;
+  const route = history.state;
+  const valid = route?.ledgerUser === user.id && views.includes(route.view);
+  let view = valid ? route.view : "home";
+  const edit = valid && route.expenseId && expenses.find(x => x.id === route.expenseId);
+  if (!valid || (route.expenseId && !edit)) {
+    view = "home";
+    history.replaceState({ledgerUser: user.id, view}, "");
+  }
+  cancelEdit();
+  const tab = ["entry", "summary"].includes(view) ? "home" : view;
+  document.querySelectorAll(".page").forEach(el => el.hidden = el.dataset.page !== tab);
+  homeView(tab === "home" ? view : "home");
+  if (edit) fillEdit(edit);
+  window.scrollTo(0, 0);
+}
+window.addEventListener("popstate", restoreRoute);
 $("refreshBtn").onclick=load;
 async function auth(type){if(!db)return;const email=$("email").value.trim(),password=$("password").value;if(!email||!password){notice("请输入邮箱和密码",true);return}let res;if(type==="signup")res=await db.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});else res=await db.auth.signInWithPassword({email,password});if(res.error){notice(errMessage(res.error),true);return}if(type==="signup"&&!res.data.session){notice("注册已提交，请查看邮箱验证邮件，然后回来登录。");return}if(res.data.user){sessionUI(res.data.user);await load()}}
 $("loginBtn").onclick=()=>auth("login");$("signupBtn").onclick=()=>auth("signup");$("logoutBtn").onclick=async()=>{const {error}=await db.auth.signOut();if(error){notice(errMessage(error),true);return}++requestVersion;sessionUI(null)};
