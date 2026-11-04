@@ -1,5 +1,5 @@
 /* 智能云端记账本 2.2 PWA: only install icons/offline help. NEVER cache bank/account/API responses. */
-const CACHE='cloud-accounting-static-v2-2-1';
+const CACHE='cloud-accounting-static-home-v3';
 const PRECACHE=['./offline.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon.png'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(PRECACHE)).then(()=>self.skipWaiting()));

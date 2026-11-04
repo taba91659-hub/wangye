@@ -1,8 +1,8 @@
 {
   "id": "/wangye/",
-  "name": "我的智能云端记账本",
-  "short_name": "云端记账本",
-  "description": "个人云端记账、预算管理、消费报表和跨设备同步",
+  "name": "我的记账本",
+  "short_name": "我的记账本",
+  "description": "记录每笔消费，查看累计支出",
   "lang": "zh-CN",
   "start_url": "/wangye/",
   "scope": "/wangye/",
