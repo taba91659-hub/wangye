@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#225de6">
+<meta name="theme-color" content="#174C38">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -54,9 +54,14 @@ button:active{transform:scale(.985)}
   .card:focus-within{scroll-margin-bottom:100px}
 }
 @media(display-mode:standalone){body{background:#f4f7fc}main{padding-top:max(13px,env(safe-area-inset-top,0px))}}
-.notice:empty{display:none}#homeActions{display:grid;gap:14px;margin-top:22px}#homeActions button{width:100%;font-weight:700;border-radius:20px}#addEntry{min-height:110px;font-size:32px}#showSum{min-height:76px;font-size:23px;background:white;color:#254987;border:1px solid #d3dff4}.back{padding:10px 15px;margin-bottom:16px;border-radius:12px;border:none;color:#214674;background:#eef4ff}#geoStatus{display:block;margin-top:6px}#locate{margin-top:8px}[hidden]{display:none!important}#count{background:transparent;color:white;border:0;padding:8px 4px 8px 0;min-height:44px;font:inherit;font-weight:600;cursor:pointer}#count::after{content:"⌄";margin-left:8px}#count[aria-expanded="true"]::after{content:"⌃"}#expenseDetails table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}#expenseDetails caption{text-align:left;font-size:18px;font-weight:700;margin-bottom:12px}#expenseDetails :is(th,td){padding:10px 0;border-bottom:1px solid #e4e8ef;text-align:left}#expenseDetails :is(th,td):last-child{text-align:right}</style>
+.notice:empty{display:none}#homeActions{display:grid;gap:14px;margin-top:22px}#homeActions button{width:100%;font-weight:700;border-radius:20px}#addEntry{min-height:110px;font-size:32px}#showSum{min-height:76px;font-size:23px;background:white;color:#254987;border:1px solid #d3dff4}.back{padding:10px 15px;margin-bottom:16px;border-radius:12px;border:none;color:#214674;background:#eef4ff}#geoStatus{display:block;margin-top:6px}#locate{margin-top:8px}[hidden]{display:none!important}#count{background:transparent;color:white;border:0;padding:8px 4px 8px 0;min-height:44px;font:inherit;font-weight:600;cursor:pointer}#count::after{content:"⌄";margin-left:8px}#count[aria-expanded="true"]::after{content:"⌃"}#expenseDetails table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}#expenseDetails caption{text-align:left;font-size:18px;font-weight:700;margin-bottom:12px}#expenseDetails :is(th,td){padding:10px 0;border-bottom:1px solid #e4e8ef;text-align:left}#expenseDetails :is(th,td):last-child{text-align:right}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f4f7fa;color:#172e40;padding-bottom:max(20px,env(safe-area-inset-bottom));font-variant-numeric:tabular-nums}button,input,select{font-family:inherit}header h1{font-size:clamp(26px,5vw,36px);line-height:1.25}#homeActions{max-width:720px;margin:20px auto;gap:10px}#homeActions button{display:flex;align-items:center;gap:15px;text-align:left;min-height:74px;padding:14px 20px;color:#1c3447;background:white;border:1px solid #d9e3e8;border-radius:18px;box-shadow:0 3px 12px #163e5508}#homeActions #addEntry{min-height:96px;color:white;background:linear-gradient(118deg,#15576b,#197c81);border:0}#homeActions i{display:grid;place-items:center;flex:0 0 42px;height:42px;background:#e9f4f4;color:#21636b;border-radius:13px;font:normal 25px system-ui}#homeActions strong,#homeActions small{display:block}#homeActions strong{font-size:20px;line-height:1.35}#homeActions small{font-size:13px;color:#506370;font-weight:400;margin-top:3px}#homeActions #addEntry strong{font-size:26px}#homeActions #addEntry small{color:#e4f3f3}#homeActions b{margin-left:auto;font-size:25px;font-weight:400;opacity:.65}.returnHome,.periods button,.back{background:#e7f1f2;color:#194f5c;border:none;border-radius:12px;padding:10px 15px;font-weight:600;min-height:44px}.returnHome{margin-bottom:12px}.periods{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}details{border-block:1px solid #dce5ea;padding:10px 0}summary{cursor:pointer;color:#215767;font-weight:600;padding:6px}details .filter-tools{margin:10px 0}.hero{background:linear-gradient(120deg,#15576b,#197c81)}.primary{background:#176b75}.card{border-radius:18px;border-color:#d9e3e8}.page h2{font-size:21px}.card label{font-size:14px}button:focus-visible,summary:focus-visible{outline:3px solid #178396;outline-offset:2px}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-</head>
+<style>
+:root{--theme-ink:#174C38;--theme-soft:#e6ecdf;--theme-wash:#faf9f4;background:var(--theme-wash)}body{background:var(--theme-wash);color:#202621}main{max-width:760px}header{padding:clamp(24px,7vh,85px) 0 12px}#homeActions{gap:0;max-width:none}#homeActions button{border:0;border-radius:0;min-height:67px;box-shadow:none;background:var(--theme-soft);color:#202621}#homeActions #addEntry{min-height:68px;border-radius:50px;background:var(--theme-ink);margin-bottom:17px;justify-content:center;color:white}#homeActions #addEntry b,#homeActions small{display:none}#homeActions #showSum{border-radius:22px 22px 0 0}#homeActions button:last-child{border-radius:0 0 22px 22px}#homeActions button:nth-child(n+3){border-top:1px solid #17282016}#homeActions i,#homeActions #addEntry i{color:inherit;background:transparent}#homeActions i{color:var(--theme-ink)}
+.hero,.primary,.fill{background:var(--theme-ink)}.secondary,.periods button,.back,.returnHome,.notice,.result-strip,.pill{background:var(--theme-soft);color:var(--theme-ink)}#search{background:var(--theme-wash);border:1px solid var(--theme-ink);border-radius:30px}summary,.money{color:var(--theme-ink)}:is(input,button,select,summary):focus-visible{outline-color:var(--theme-ink)}
+</style></head>
 <body>
 
 <main>
@@ -67,14 +72,9 @@ button:active{transform:scale(.985)}
 <div class="actions" style="margin-top:16px"><button id="loginBtn" class="primary">登录</button><button id="signupBtn" class="secondary">注册新账号</button></div>
 <p class="muted">注册后请根据邮件提示验证邮箱，验证完成后返回登录。</p></section>
 <div id="app" hidden>
-<nav class="tabs" aria-label="记账本主导航">
-<button type="button" class="tab-button active" data-tab="home" aria-current="page"><span class="tab-ico">⌂</span><span>首页</span></button>
-<button type="button" class="tab-button" data-tab="bills" aria-current="false"><span class="tab-ico">☷</span><span>账单</span></button>
-<button type="button" class="tab-button" data-tab="charts" aria-current="false"><span class="tab-ico">◉</span><span>统计</span></button>
-<button type="button" class="tab-button" data-tab="account" aria-current="false"><span class="tab-ico">♙</span><span>我的</span></button>
-</nav>
+
 <div class="page" data-page="home">
-<div id="homeActions"><button class="primary" id="addEntry">＋ 记一笔</button><button class="secondary" id="showSum">累计</button></div>
+<nav id="homeActions" aria-label="首页菜单"><button type="button" id="addEntry"><i aria-hidden="true">＋</i><span><strong>记一笔</strong><small>记录消费</small></span><b aria-hidden="true">›</b></button><button type="button" id="showSum"><i aria-hidden="true">Σ</i><span><strong>累计</strong><small>总支出与逐笔明细</small></span><b aria-hidden="true">›</b></button><button type="button" data-dest="bills"><i aria-hidden="true">⌕</i><span><strong>搜索</strong><small>按条件查找账单</small></span><b aria-hidden="true">›</b></button><button type="button" data-dest="charts"><i aria-hidden="true">▥</i><span><strong>统计</strong><small>分类占比与月度趋势</small></span><b aria-hidden="true">›</b></button><button type="button" data-dest="account"><i aria-hidden="true">◎</i><span><strong>我的</strong><small>账号、备份与导出</small></span><b aria-hidden="true">›</b></button></nav>
 <section class="hero" id="summaryPanel" hidden><button class="back" type="button">返回首页</button><div>累计总支出</div><div class="huge" id="total">¥0.00</div><button type="button" id="count" aria-expanded="false" aria-controls="expenseDetails">0 笔消费</button></section>
 <section id="expenseDetails" class="card" aria-label="消费明细" hidden><table><caption>消费明细</caption><thead><tr><th scope="col">日期</th><th scope="col">金额</th></tr></thead><tbody id="detailRows"></tbody></table><p id="detailEmpty" hidden>暂无消费记录</p></section>
 <section class="card" id="entryPanel" hidden><button class="back" type="button">返回首页</button><h2>✏️ <span id="formTitle">快速记一笔</span></h2>
@@ -85,25 +85,25 @@ button:active{transform:scale(.985)}
 <label for="place">地点（选填）</label><input id="place" maxlength="120" placeholder="输入地点，或使用当前位置"><button type="button" id="locate" class="secondary">使用当前位置</button><small id="geoStatus" role="status"></small><div class="actions" style="margin-top:16px"><button class="primary" type="submit" id="submitExpense">＋ 保存到云端</button><button class="secondary" type="button" id="cancelEdit" hidden>取消编辑</button></div></form></section>
 
 </div>
-<div class="page" data-page="bills" hidden>
-<section class="card"><h2>🔎 搜索全部云端账单</h2><p class="muted">可以跨月份搜索，也可以组合日期、分类和金额条件。</p>
+<div class="page" data-page="bills" hidden><button class="returnHome">‹ 返回首页</button>
+<section class="card"><h2>搜索账单</h2><p class="muted">可以跨月份搜索，也可以组合日期、分类和金额条件。</p>
 <div class="filter-tools">
-<div class="filter-wide"><label for="search">消费项目或分类关键词</label><input id="search" type="search" placeholder="例如：超市、午餐"></div>
+<div class="filter-wide"><label for="search">项目、分类或地点</label><input id="search" type="search" placeholder="例如：超市、午餐"></div>
 <div><label for="filterCategory">消费分类</label><select id="filterCategory"><option value="">全部分类</option><option>餐饮</option><option>购物</option><option>交通</option><option>娱乐</option><option>其他</option></select></div>
-<div><label for="filterSort">排序方式</label><select id="filterSort"><option value="newest">时间最新优先</option><option value="oldest">时间最早优先</option><option value="amountDesc">金额从高到低</option><option value="amountAsc">金额从低到高</option></select></div>
+</div><div class="periods"><button data-period="today">今天</button><button data-period="week">近 7 天</button><button data-period="month">本月</button></div><details><summary>更多筛选与排序</summary><div class="filter-tools"><div><label for="filterSort">排序方式</label><select id="filterSort"><option value="newest">时间最新优先</option><option value="oldest">时间最早优先</option><option value="amountDesc">金额从高到低</option><option value="amountAsc">金额从低到高</option></select></div>
 <div><label for="filterFrom">开始日期</label><input id="filterFrom" type="date"></div>
 <div><label for="filterTo">结束日期</label><input id="filterTo" type="date"></div>
 <div><label for="amountMin">最低金额（元）</label><input id="amountMin" inputmode="decimal" type="number" min="0" step="0.01" placeholder="不限"></div>
 <div><label for="amountMax">最高金额（元）</label><input id="amountMax" inputmode="decimal" type="number" min="0" step="0.01" placeholder="不限"></div>
 </div>
-<div class="actions" style="margin-top:14px"><button id="useCurrentMonth" type="button" class="secondary">仅看统计月份</button><button id="clearFilters" type="button" class="secondary">清除所有筛选</button></div>
+</details><div class="actions" style="margin-top:14px"><button id="useCurrentMonth" type="button" class="secondary">仅看统计月份</button><button id="clearFilters" type="button" class="secondary">清除所有筛选</button></div>
 <div class="result-strip"><span id="filteredSummary">正在加载账单…</span><span>☁️ 云端记录</span></div><div id="records"></div>
 </section></div>
-<div class="page" data-page="charts" hidden>
-<section class="card"><h2>📊 消费统计图表</h2><p class="muted"><label for="month">统计月份</label><input id="month" type="month"></p>
+<div class="page" data-page="charts" hidden><button class="returnHome">‹ 返回首页</button>
+<section class="card"><h2>支出统计</h2><p class="muted"><label for="month">统计月份</label><input id="month" type="month"></p>
 <div class="two"><div><h3>分类占比</h3><div id="donut" class="donut"></div><div id="legend"></div></div><div><h3>近6个月消费趋势</h3><div id="trend"></div></div></div></section></div>
-<div class="page" data-page="account" hidden>
-<section class="card"><h2>👤 我的账号</h2><div class="row"><div><strong>已登录</strong><div class="small" id="userEmail"></div></div><button type="button" class="secondary" id="logoutBtn">退出登录</button></div><button id="refreshBtn" type="button" class="secondary wide">↻ 刷新云端账单</button></section>
+<div class="page" data-page="account" hidden><button class="returnHome">‹ 返回首页</button><section class="card"><button id="chooseTheme" class="secondary" aria-expanded="false" aria-controls="themeChoices">变色</button><div id="themeChoices" hidden aria-label="选择界面颜色"></div><small id="themeNote" role="status"></small></section>
+<section class="card"><h2>我的账号</h2><div class="row"><div><strong>已登录</strong><div class="small" id="userEmail"></div></div><button type="button" class="secondary" id="logoutBtn">退出登录</button></div><button id="refreshBtn" type="button" class="secondary wide">↻ 刷新云端账单</button></section>
 
 <section class="card" id="installCard">
   <h2>📲 安装到手机桌面</h2>
@@ -154,7 +154,7 @@ function renderRecords(){
   const rows=expenses.filter(x=>{
     const name=String(x.name||"").toLocaleLowerCase("zh-CN");
     const date=localTime(x.date).slice(0,10),amount=Number(x.amount);
-    return (!q||name.includes(q)||String(x.category).toLocaleLowerCase("zh-CN").includes(q))&&
+    return q.split(/\s+/).every(word=>[name,x.category,x.location_note,date,String(amount)].join(" ").toLowerCase().includes(word))&&
       (!cat||cat===x.category)&&(!from||date>=from)&&(!to||date<=to)&&
       (min===null||amount>=min)&&(max===null||amount<=max);
   }).slice();
@@ -164,7 +164,7 @@ function renderRecords(){
     if(sort==="amountAsc")return Number(a.amount)-Number(b.amount)||new Date(b.date)-new Date(a.date);
     return new Date(b.date)-new Date(a.date);
   });
-  summary.textContent=`找到 ${rows.length} 笔账单 · 合计 ${money(sum(rows))}`;
+  summary.textContent=(from||to?(from||"不限")+" 至 "+(to||"不限")+" · ":"")+`找到 ${rows.length} 笔账单 · 合计 ${money(sum(rows))}`;
   if(!rows.length){const p=document.createElement("p");p.className="empty";p.textContent="没有符合条件的记录。可以调整条件，或点击清除筛选。";list.append(p);return;}
   rows.forEach(x=>{
     const row=document.createElement("div");row.className="ledger-row";
@@ -206,6 +206,9 @@ $("useCurrentMonth").onclick=()=>{
   $("filterTo").value=`${y}-${pad(m)}-${pad(new Date(y,m,0).getDate())}`;
   renderRecords();
 };
+document.querySelectorAll("[data-dest]").forEach(b=>b.onclick=()=>switchTab(b.dataset.dest));
+document.querySelectorAll(".returnHome").forEach(b=>b.onclick=()=>switchTab("home"));
+document.querySelectorAll("[data-period]").forEach(b=>b.onclick=()=>{const end=new Date(),start=new Date(end);if(b.dataset.period==="week")start.setDate(start.getDate()-6);if(b.dataset.period==="month")start.setDate(1);$("filterFrom").value=localTime(start).slice(0,10);$("filterTo").value=localTime(end).slice(0,10);renderRecords()});
 function switchTab(tab){homeView("home");
   if(!["home","bills","charts","account"].includes(tab))tab="home";
   document.querySelectorAll(".page").forEach(el=>el.hidden=el.dataset.page!==tab);
@@ -267,5 +270,14 @@ $("importFile").onchange=async e=>{const file=e.target.files?.[0];if(!file||!use
   }
 })();
 </script>
-</body>
+<script>
+(()=>{
+const options=[['墨绿','#174C38','#e6ecdf','#faf9f4'],['雾蓝','#345780','#e5edf5','#f8fafd'],['淡紫','#674b80','#eee7f4','#fbf9fc'],['茶棕','#704c32','#f1e7de','#fcf9f6']];
+const key='ledger.manual.theme.v1',box=document.getElementById('themeChoices'),trigger=document.getElementById('chooseTheme');
+function apply(n){const entry=options[n]||options[0];['ink','soft','wash'].forEach((k,i)=>document.documentElement.style.setProperty('--theme-'+k,entry[i+1]));document.querySelector('meta[name="theme-color"]').content=entry[1];[...box.children].forEach((b,i)=>{b.setAttribute('aria-pressed',String(i===n));b.textContent=(i===n?'✓ ':'')+options[i][0]})}
+options.forEach((o,i)=>{const b=document.createElement('button');b.type='button';b.style.cssText='background:'+o[1]+';color:white;margin:6px 6px 0 0';box.append(b);b.onclick=()=>{apply(i);let msg='已选择'+o[0];try{localStorage.setItem(key,String(i))}catch{msg+='（仅本次有效）'}document.getElementById('themeNote').textContent=msg;box.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.focus()}});
+trigger.onclick=()=>{box.hidden=!box.hidden;trigger.setAttribute('aria-expanded',String(!box.hidden))};
+let initial=0;try{const i=Number(localStorage.getItem(key));if(Number.isInteger(i)&&options[i])initial=i}catch{}apply(initial)
+})();
+</script></body>
 </html>
