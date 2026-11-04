@@ -54,7 +54,7 @@ button:active{transform:scale(.985)}
   .card:focus-within{scroll-margin-bottom:100px}
 }
 @media(display-mode:standalone){body{background:#f4f7fc}main{padding-top:max(13px,env(safe-area-inset-top,0px))}}
-.notice:empty{display:none}#homeActions{display:grid;gap:14px;margin-top:22px}#homeActions button{width:100%;font-weight:700;border-radius:20px}#addEntry{min-height:110px;font-size:32px}#showSum{min-height:76px;font-size:23px;background:white;color:#254987;border:1px solid #d3dff4}.back{padding:10px 15px;margin-bottom:16px;border-radius:12px;border:none;color:#214674;background:#eef4ff}#geoStatus{display:block;margin-top:6px}#locate{margin-top:8px}[hidden]{display:none!important}</style>
+.notice:empty{display:none}#homeActions{display:grid;gap:14px;margin-top:22px}#homeActions button{width:100%;font-weight:700;border-radius:20px}#addEntry{min-height:110px;font-size:32px}#showSum{min-height:76px;font-size:23px;background:white;color:#254987;border:1px solid #d3dff4}.back{padding:10px 15px;margin-bottom:16px;border-radius:12px;border:none;color:#214674;background:#eef4ff}#geoStatus{display:block;margin-top:6px}#locate{margin-top:8px}[hidden]{display:none!important}#count{background:transparent;color:white;border:0;padding:8px 4px 8px 0;min-height:44px;font:inherit;font-weight:600;cursor:pointer}#count::after{content:"⌄";margin-left:8px}#count[aria-expanded="true"]::after{content:"⌃"}#expenseDetails table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}#expenseDetails caption{text-align:left;font-size:18px;font-weight:700;margin-bottom:12px}#expenseDetails :is(th,td){padding:10px 0;border-bottom:1px solid #e4e8ef;text-align:left}#expenseDetails :is(th,td):last-child{text-align:right}</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
@@ -75,7 +75,8 @@ button:active{transform:scale(.985)}
 </nav>
 <div class="page" data-page="home">
 <div id="homeActions"><button class="primary" id="addEntry">＋ 记一笔</button><button class="secondary" id="showSum">累计</button></div>
-<section class="hero" id="summaryPanel" hidden><button class="back" type="button">返回首页</button><div>累计总支出</div><div class="huge" id="total">¥0.00</div><div id="count">0 笔消费</div></section>
+<section class="hero" id="summaryPanel" hidden><button class="back" type="button">返回首页</button><div>累计总支出</div><div class="huge" id="total">¥0.00</div><button type="button" id="count" aria-expanded="false" aria-controls="expenseDetails">0 笔消费</button></section>
+<section id="expenseDetails" class="card" aria-label="消费明细" hidden><table><caption>消费明细</caption><thead><tr><th scope="col">日期</th><th scope="col">金额</th></tr></thead><tbody id="detailRows"></tbody></table><p id="detailEmpty" hidden>暂无消费记录</p></section>
 <section class="card" id="entryPanel" hidden><button class="back" type="button">返回首页</button><h2>✏️ <span id="formTitle">快速记一笔</span></h2>
 <form id="expenseForm"><div class="grid"><div><label for="amount">金额（元）</label><input id="amount" type="number" inputmode="decimal" required min="0.01" max="999999999" step="0.01" placeholder="例如：25.50"></div>
 <div><label for="category">消费分类</label><select id="category"><option>餐饮</option><option>购物</option><option>交通</option><option>娱乐</option><option>其他</option></select></div></div>
@@ -132,7 +133,9 @@ function localTime(d){const x=new Date(d),pad=n=>String(n).padStart(2,"0");retur
 function errMessage(e){return e?.message||"操作失败，请检查网络后重试"}
 function sessionUI(current){user=current||null;$("loginBox").hidden=!!user;$("app").hidden=!user;if(user){$("userEmail").textContent=user.email||"";switchTab("home");}else{expenses=[];budgets=[];editingId=null;notice("请登录后使用云端记账。")}}
 async function load(){if(!user)return;const version=++requestVersion,uid=user.id;notice("正在读取云端账单…");const rows=[];for(let i=0;;i+=500){const er=await db.from("expenses").select("*").eq("user_id",uid).order("date",{ascending:false}).order("id").range(i,i+499);if(version!==requestVersion||user?.id!==uid)return;if(er.error){notice("读取失败："+errMessage(er.error),true);return}rows.push(...er.data);if(er.data.length<500)break}expenses=rows;notice("");render()}
-function render(){if(!user)return;$("total").textContent=money(sum(expenses));$("count").textContent=expenses.length+" 笔消费";const month=$("month").value,monthly=expenses.filter(x=>ym(x.date)===month);renderCharts(monthly,month);renderRecords()}
+function setDetails(open){$("count").setAttribute("aria-expanded",String(open));$("expenseDetails").hidden=!open;const body=$("detailRows");body.replaceChildren();if(!open)return;$("detailEmpty").hidden=expenses.length!==0;const rows=document.createDocumentFragment();for(const x of expenses){const tr=document.createElement("tr");const day=document.createElement("td"),amount=document.createElement("td");day.textContent=localTime(x.date).slice(0,10);amount.textContent=money(x.amount);tr.append(day,amount);rows.append(tr)}body.append(rows)}
+$("count").onclick=()=>setDetails($("expenseDetails").hidden);
+function render(){if(!$("expenseDetails").hidden)setDetails(true);if(!user)return;$("total").textContent=money(sum(expenses));$("count").textContent=expenses.length+" 笔消费";const month=$("month").value,monthly=expenses.filter(x=>ym(x.date)===month);renderCharts(monthly,month);renderRecords()}
 function renderCharts(monthly,month){const vals=cats.map(cat=>sum(monthly.filter(x=>x.category===cat))),total=vals.reduce((a,b)=>a+b,0);let start=0;const slices=vals.map((v,i)=>{const end=start+(total?v/total*100:0),s=`${palette[i]} ${start}% ${end}%`;start=end;return s});$("donut").style.background=total?`conic-gradient(${slices.join(",")})`:"#eef0f5";$("legend").replaceChildren();cats.forEach((cat,i)=>{const line=document.createElement("div");line.className="row";const a=document.createElement("span"),b=document.createElement("span");a.textContent="● "+cat;a.style.color=palette[i];b.textContent=money(vals[i]);line.append(a,b);$("legend").append(line)});const [yr,mo]=month.split("-").map(Number),points=[];for(let k=5;k>=0;k--){const d=new Date(yr,mo-1-k,1),m=ym(d);points.push({label:m.slice(2),value:sum(expenses.filter(x=>ym(x.date)===m))})}const max=Math.max(...points.map(p=>p.value),1);$("trend").replaceChildren();points.forEach(p=>{const line=document.createElement("div");line.className="chart-row";const a=document.createElement("span"),b=document.createElement("div"),fill=document.createElement("div"),c=document.createElement("span");a.textContent=p.label;b.className="track";fill.className="fill";fill.style.width=100*p.value/max+"%";b.append(fill);c.textContent=money(p.value);line.append(a,b,c);$("trend").append(line)})}
 function renderRecords(){
   // 全部云端账单跨月搜索，与统计月份独立。
@@ -177,7 +180,7 @@ function renderRecords(){
   });
 }
 let geoGeneration=0;
-function homeView(which){geoGeneration++;$("geoStatus").textContent="";$("locate").disabled=false;$("homeActions").hidden=which!=="home";$("summaryPanel").hidden=which!=="summary";$("entryPanel").hidden=which!=="entry"}
+function homeView(which){setDetails(false);geoGeneration++;$("geoStatus").textContent="";$("locate").disabled=false;$("homeActions").hidden=which!=="home";$("summaryPanel").hidden=which!=="summary";$("entryPanel").hidden=which!=="entry"}
 $("addEntry").onclick=()=>{cancelEdit();homeView("entry");$("amount").focus()};
 $("showSum").onclick=()=>homeView("summary");
 document.querySelectorAll(".back").forEach(b=>b.onclick=()=>{cancelEdit();homeView("home");$("addEntry").focus()});
