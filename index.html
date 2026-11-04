@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#174C38">
+<meta name="theme-color" content="#faf9f4">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -61,17 +61,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 <style>
 :root{--theme-ink:#174C38;--theme-soft:#e6ecdf;--theme-wash:#faf9f4;background:var(--theme-wash)}body{background:var(--theme-wash);color:#202621}main{max-width:760px}header{padding:clamp(24px,7vh,85px) 0 12px}#homeActions{gap:0;max-width:none}#homeActions button{border:0;border-radius:0;min-height:67px;box-shadow:none;background:var(--theme-soft);color:#202621}#homeActions #addEntry{min-height:68px;border-radius:50px;background:var(--theme-ink);margin-bottom:17px;justify-content:center;color:white}#homeActions #addEntry b,#homeActions small{display:none}#homeActions #showSum{border-radius:22px 22px 0 0}#homeActions button:last-child{border-radius:0 0 22px 22px}#homeActions button:nth-child(n+3){border-top:1px solid #17282016}#homeActions i,#homeActions #addEntry i{color:inherit;background:transparent}#homeActions i{color:var(--theme-ink)}
 .hero,.primary,.fill{background:var(--theme-ink)}.secondary,.periods button,.back,.returnHome,.notice,.result-strip,.pill{background:var(--theme-soft);color:var(--theme-ink)}#search{background:var(--theme-wash);border:1px solid var(--theme-ink);border-radius:30px}summary,.money{color:var(--theme-ink)}:is(input,button,select,summary):focus-visible{outline-color:var(--theme-ink)}
-</style><style>
-body::after {
-  content: "";
-  position: fixed;
-  inset-inline: 0;
-  bottom: 0;
-  height: env(safe-area-inset-bottom, 0px);
-  background: var(--theme-ink);
-  pointer-events: none;
-  z-index: 100;
-}
 </style></head>
 <body>
 
@@ -297,7 +286,7 @@ $("importFile").onchange=async e=>{const file=e.target.files?.[0];if(!file||!use
 (()=>{
 const options=[['墨绿','#174C38','#e6ecdf','#faf9f4'],['雾蓝','#345780','#e5edf5','#f8fafd'],['淡紫','#674b80','#eee7f4','#fbf9fc'],['茶棕','#704c32','#f1e7de','#fcf9f6']];
 const key='ledger.manual.theme.v1',box=document.getElementById('themeChoices'),trigger=document.getElementById('chooseTheme');
-function apply(n){const entry=options[n]||options[0];['ink','soft','wash'].forEach((k,i)=>document.documentElement.style.setProperty('--theme-'+k,entry[i+1]));document.querySelector('meta[name="theme-color"]').content=entry[1];[...box.children].forEach((b,i)=>{b.setAttribute('aria-pressed',String(i===n));b.textContent=(i===n?'✓ ':'')+options[i][0]})}
+function apply(n){const entry=options[n]||options[0];['ink','soft','wash'].forEach((k,i)=>document.documentElement.style.setProperty('--theme-'+k,entry[i+1]));document.querySelector('meta[name="theme-color"]').content=entry[3];[...box.children].forEach((b,i)=>{b.setAttribute('aria-pressed',String(i===n));b.textContent=(i===n?'✓ ':'')+options[i][0]})}
 options.forEach((o,i)=>{const b=document.createElement('button');b.type='button';b.style.cssText='background:'+o[1]+';color:white;margin:6px 6px 0 0';box.append(b);b.onclick=()=>{apply(i);let msg='已选择'+o[0];try{localStorage.setItem(key,String(i))}catch{msg+='（仅本次有效）'}document.getElementById('themeNote').textContent=msg;box.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.focus()}});
 trigger.onclick=()=>{box.hidden=!box.hidden;trigger.setAttribute('aria-expanded',String(!box.hidden))};
 let initial=0;try{const i=Number(localStorage.getItem(key));if(Number.isInteger(i)&&options[i])initial=i}catch{}apply(initial)
